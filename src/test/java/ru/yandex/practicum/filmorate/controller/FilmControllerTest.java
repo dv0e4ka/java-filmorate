@@ -95,7 +95,7 @@ class FilmControllerTest {
                 ValidationException.class,
                 () -> filmController.addFilm(filmReleaseError)
         );
-        assertEquals("некорректные данные по продолжительности фильма" , exception.getMessage());
+        assertEquals("некорректные данные по продолжительности фильма", exception.getMessage());
     }
 
     @Test
