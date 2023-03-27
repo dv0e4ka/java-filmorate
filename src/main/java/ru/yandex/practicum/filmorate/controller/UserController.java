@@ -73,7 +73,7 @@ public class UserController {
         }
 
         LocalDate birthday = user.getBirthday();
-        if(birthday.isAfter(LocalDate.now())) {
+        if (birthday.isAfter(LocalDate.now())) {
             String exception = "указана дата день рождения пользователя из будущего времени";
             log.error(exception);
             throw new ValidationException(exception);
