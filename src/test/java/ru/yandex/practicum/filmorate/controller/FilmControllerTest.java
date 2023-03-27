@@ -18,14 +18,12 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static ru.yandex.practicum.filmorate.controller.FilmController.MIN_FILM_REALISE_DATE;
 
-
 @SpringBootTest
 class FilmControllerTest {
     @Autowired
     private FilmController filmController;
     private static Gson gson;
     private Film filmMatrix;
-
 
     @BeforeAll
     static void setUpGson() {
@@ -34,6 +32,7 @@ class FilmControllerTest {
                 .registerTypeAdapter(Duration.class, new DurationAdapter())
                 .create();
     }
+
     @BeforeEach
     void setUpNewFilm() {
         filmMatrix = Film.builder()
@@ -59,7 +58,6 @@ class FilmControllerTest {
                 () -> filmController.addFilm(noNameFilm)
         );
         assertEquals("фильм введён без названия", exception.getMessage());
-
     }
 
     @Test

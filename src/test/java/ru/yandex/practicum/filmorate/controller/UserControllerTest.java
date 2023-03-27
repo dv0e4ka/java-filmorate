@@ -10,14 +10,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import ru.yandex.practicum.filmorate.config.DurationAdapter;
 import ru.yandex.practicum.filmorate.config.LocalDateTypeAdapter;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
-import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.time.Duration;
 import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static ru.yandex.practicum.filmorate.controller.FilmController.MIN_FILM_REALISE_DATE;
 
 @SpringBootTest
 class UserControllerTest {
