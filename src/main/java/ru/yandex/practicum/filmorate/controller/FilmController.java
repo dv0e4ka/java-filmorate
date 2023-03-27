@@ -11,13 +11,13 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.time.Duration;
+
 @RestController
 @RequestMapping("/films")
 @Slf4j
 public class FilmController {
-    final private HashMap<Integer, Film> getFilms = new HashMap<>();
-    public final static LocalDate MIN_FILM_REALISE_DATE = LocalDate.of(1895, 12, 28);
+    private HashMap<Integer, Film> getFilms = new HashMap<>();
+    public static final LocalDate MIN_FILM_REALISE_DATE = LocalDate.of(1895, 12, 28);
     private int id = 0;
 
 
