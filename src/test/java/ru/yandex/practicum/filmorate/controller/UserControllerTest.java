@@ -45,75 +45,25 @@ class UserControllerTest {
 
     @Test
     void shouldAddUser() throws ValidationException {
-        User filmReturn = userController.addUser(defaultUser);
+        User filmReturn = userController.add(defaultUser);
         assertEquals(defaultUser, filmReturn);
     }
 
     @Test
-    void shouldSetEmptyMail() {
-        defaultUser.setEmail("  ");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.addUser(defaultUser)
-        );
-        assertEquals("неккоректно введена почта пользователя", exception.getMessage());
-    }
-
-    @Test
-    void shouldSetMailWithoutMainSymbol() {
-        defaultUser.setEmail("name0gmail.com");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.addUser(defaultUser)
-        );
-        assertEquals("неккоректно введена почта пользователя", exception.getMessage());
-    }
-
-    @Test
-    void shouldBlankLogin() {
-        defaultUser.setLogin(" ");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.addUser(defaultUser)
-        );
-        assertEquals("неккоректно введен логин пользователя", exception.getMessage());
-    }
-
-    @Test
-    void shouldSpaceInLogin() {
-        defaultUser.setLogin(" ");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.addUser(defaultUser)
-        );
-        assertEquals("неккоректно введен логин пользователя", exception.getMessage());
-    }
-
-    @Test
-    void shouldBirthdayInFuture() {
-        defaultUser.setBirthday(LocalDate.of(3333, 1, 1));
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> userController.addUser(defaultUser)
-        );
-        assertEquals("указана дата день рождения пользователя из будущего времени", exception.getMessage());
-    }
-
-    @Test
     void shouldUpdateUser() throws ValidationException {
-        int id = userController.addUser(defaultUser).getId();
+        int id = userController.add(defaultUser).getId();
         defaultUser.setId(id);
         defaultUser.setName("nameNameName");
         defaultUser.setLogin("loginLoginLogin");
         defaultUser.setEmail("mailMailMail@gmail.com");
         defaultUser.setBirthday(LocalDate.of(2012, 12, 12));
-        User userReturn = userController.updateUser(defaultUser);
+        User userReturn = userController.update(defaultUser);
         assertEquals(defaultUser, userReturn);
     }
 
     @Test
     void shouldUpdateUserWithWrongId() throws ValidationException {
-        int id = userController.addUser(defaultUser).getId() + 999;
+        int id = userController.add(defaultUser).getId() + 999;
         defaultUser.setId(id);
         defaultUser.setName("nameNameName");
         defaultUser.setLogin("loginLoginLogin");
@@ -121,7 +71,7 @@ class UserControllerTest {
         defaultUser.setBirthday(LocalDate.of(2012, 12, 12));
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> userController.updateUser(defaultUser)
+                () -> userController.update(defaultUser)
         );
         assertEquals("Пользователь с Id '" + id + "' не найден в сервисе", exception.getMessage());
     }

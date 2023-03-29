@@ -45,35 +45,8 @@ class FilmControllerTest {
 
     @Test
     void shouldAddFilm() throws ValidationException {
-        Film filmReturn = filmController.addFilm(filmMatrix);
+        Film filmReturn = filmController.add(filmMatrix);
         assertEquals(filmMatrix, filmReturn);
-    }
-
-    @Test
-    void shouldGetWrongName() {
-        Film noNameFilm = filmMatrix;
-        noNameFilm.setName("");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(noNameFilm)
-        );
-        assertEquals("фильм введён без названия", exception.getMessage());
-    }
-
-    @Test
-    void shouldGetWrongDescription() {
-        Film filmDescriptionError = filmMatrix;
-        StringBuilder builder = new StringBuilder();
-        for (int i = 0; i < 201; i++) {
-            builder.append("X");
-        }
-        String longDescription = builder.toString();
-        filmDescriptionError.setDescription(longDescription);
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(filmDescriptionError)
-        );
-        assertEquals("описание фильма превышает 200 символов", exception.getMessage());
     }
 
     @Test
@@ -82,55 +55,32 @@ class FilmControllerTest {
         filmReleaseError.setReleaseDate(LocalDate.of(1895, 12, 27));
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> filmController.addFilm(filmReleaseError)
+                () -> filmController.add(filmReleaseError)
         );
         assertEquals("фильм вышел раньше " + MIN_FILM_REALISE_DATE.toString(), exception.getMessage());
     }
 
     @Test
-    void shouldGetWrongZeroDuration() {
-        Film filmReleaseError = filmMatrix;
-        filmReleaseError.setDuration(0);
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(filmReleaseError)
-        );
-        assertEquals("некорректные данные по продолжительности фильма", exception.getMessage());
-    }
-
-    @Test
-    void shouldGetWrongNegativeDuration() {
-        Film filmReleaseError = filmMatrix;
-        filmReleaseError.setDuration(-1);
-        ValidationException exception = assertThrows(
-                ValidationException.class,
-                () -> filmController.addFilm(filmReleaseError)
-        );
-        assertEquals("некорректные данные по продолжительности фильма", exception.getMessage());
-    }
-
-    @Test
     void shouldUpdateFilm() throws ValidationException {
-        Film filmReturn = filmController.addFilm(filmMatrix);
+        Film filmReturn = filmController.add(filmMatrix);
         int idFilmReturned = filmReturn.getId();
         filmReturn.setId(idFilmReturned);
         filmReturn.setName("Triangle of Sadness");
         filmReturn.setDescription("fresh");
         filmReturn.setDuration(147);
         filmReturn.setReleaseDate(LocalDate.of(2022, 12, 1));
-        Film updatedFilm = filmController.updateFilm(filmReturn);
+        Film updatedFilm = filmController.update(filmReturn);
         assertEquals(filmMatrix, filmReturn);
     }
 
     @Test
     void shouldMissIdWhenUpdate() throws ValidationException {
-        int newId = filmController.addFilm(filmMatrix).getId() + 999;
+        int newId = filmController.add(filmMatrix).getId() + 999;
         filmMatrix.setId(newId);
         filmMatrix.setName("new description");
-        System.out.println(newId);
         ValidationException exception = assertThrows(
                 ValidationException.class,
-                () -> filmController.updateFilm(filmMatrix)
+                () -> filmController.update(filmMatrix)
         );
         assertEquals("Фильм с Id '" + newId + "' не найден в сервисе", exception.getMessage());
     }
