@@ -12,7 +12,7 @@ import java.util.stream.Collectors;
 
 @Component
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage{
+public class InMemoryFilmStorage implements FilmStorage {
     private final Map<Long, Film> filmMap = new HashMap<>();
     private long id = 0;
     ValidationService validator;
