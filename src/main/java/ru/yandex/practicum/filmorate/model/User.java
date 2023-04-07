@@ -22,7 +22,7 @@ public class User {
     private String name;
     @PastOrPresent
     private LocalDate birthday;
-    final private Set<Long> friends = new HashSet<>();
+    private final Set<Long> friends = new HashSet<>();
 
     public void addFriend(long id) {
         friends.add(id);

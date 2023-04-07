@@ -13,8 +13,8 @@ import java.util.List;
 @Service
 @Slf4j
 public class FilmService {
-    FilmStorage filmStorage;
-    UserStorage userStorage;
+    private FilmStorage filmStorage;
+    private UserStorage userStorage;
 
     @Autowired
     public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
