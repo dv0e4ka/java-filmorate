@@ -7,8 +7,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.config.DurationAdapter;
-import ru.yandex.practicum.filmorate.config.LocalDateTypeAdapter;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.util.DurationAdapterUtil;
+import ru.yandex.practicum.filmorate.util.LocalDateTypeAdapterUtil;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.User;
 
@@ -28,8 +29,8 @@ class UserControllerTest {
     @BeforeAll
     static void setUpGson() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapterUtil())
+                .registerTypeAdapter(Duration.class, new DurationAdapterUtil())
                 .create();
     }
 
@@ -51,7 +52,7 @@ class UserControllerTest {
 
     @Test
     void shouldUpdateUser() throws ValidationException {
-        int id = userController.add(defaultUser).getId();
+        long id = userController.add(defaultUser).getId();
         defaultUser.setId(id);
         defaultUser.setName("nameNameName");
         defaultUser.setLogin("loginLoginLogin");
@@ -63,14 +64,14 @@ class UserControllerTest {
 
     @Test
     void shouldUpdateUserWithWrongId() throws ValidationException {
-        int id = userController.add(defaultUser).getId() + 999;
+        long id = userController.add(defaultUser).getId() + 999;
         defaultUser.setId(id);
         defaultUser.setName("nameNameName");
         defaultUser.setLogin("loginLoginLogin");
         defaultUser.setEmail("mailMailMail@gmail.com");
         defaultUser.setBirthday(LocalDate.of(2012, 12, 12));
-        ValidationException exception = assertThrows(
-                ValidationException.class,
+        UserNotFoundException exception = assertThrows(
+                UserNotFoundException.class,
                 () -> userController.update(defaultUser)
         );
         assertEquals("Пользователь с Id '" + id + "' не найден в сервисе", exception.getMessage());

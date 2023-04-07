@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.config;
+package ru.yandex.practicum.filmorate.util;
 
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
-public class LocalDateTypeAdapter extends TypeAdapter<LocalDate> {
+public class LocalDateTypeAdapterUtil extends TypeAdapter<LocalDate> {
     private static final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd--MM-yyyy");
 
     @Override
