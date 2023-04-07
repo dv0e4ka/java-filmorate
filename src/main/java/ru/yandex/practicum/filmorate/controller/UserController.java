@@ -14,7 +14,7 @@ import java.util.List;
 @RequestMapping("/users")
 @Slf4j
 public class UserController {
-    final private UserService userService;
+    private final UserService userService;
 
     @Autowired
     public UserController(UserService userService) {
