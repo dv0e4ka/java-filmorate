@@ -12,7 +12,7 @@ import java.time.LocalDate;
 public class ValidationService {
     public static final LocalDate MIN_FILM_REALISE_DATE = LocalDate.of(1895, 12, 28);
 
-    public boolean validateFilm(Film film) {
+    public static boolean validateFilm(Film film) {
         String exception = "";
         if (film.getReleaseDate().isBefore(MIN_FILM_REALISE_DATE)) {
             exception = "фильм вышел раньше " + MIN_FILM_REALISE_DATE.toString();

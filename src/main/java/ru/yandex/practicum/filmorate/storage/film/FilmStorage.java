@@ -15,9 +15,5 @@ public interface FilmStorage {
 
     List<Film> getAllFilms();
 
-    Film addLike(long userId, long filmId);
-
-    Film deleteLike(long userId, long filmId);
-
-    List getPopularFilms(int count);
+    boolean isContains(long id);
 }

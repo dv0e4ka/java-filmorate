@@ -74,7 +74,7 @@ class UserControllerTest {
                 UserNotFoundException.class,
                 () -> userController.update(defaultUser)
         );
-        assertEquals("Пользователь с Id '" + id + "' не найден в сервисе", exception.getMessage());
+        assertEquals("Пользователь с Id '" + id + "' не найден", exception.getMessage());
     }
 }
 

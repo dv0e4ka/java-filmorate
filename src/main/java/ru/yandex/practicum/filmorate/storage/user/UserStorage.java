@@ -16,12 +16,6 @@ public interface UserStorage {
 
     List<User> getAllUsers();
 
-    void addFriend(long userId, long friendId);
-
-    void deleteFriend(long userId, long friendId);
-
-    List getUserFriends(long id);
-
-    List getCommonFriends(long id, long otherId);
+    boolean isContains(long id);
 }
 

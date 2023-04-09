@@ -83,6 +83,6 @@ class FilmControllerTest {
                 FilmNotFoundException.class,
                 () -> filmController.update(filmMatrix)
         );
-        assertEquals("Фильм с Id '" + newId + "' не найден в сервисе", exception.getMessage());
+        assertEquals("Фильм с Id '" + newId + "' не найден", exception.getMessage());
     }
 }
