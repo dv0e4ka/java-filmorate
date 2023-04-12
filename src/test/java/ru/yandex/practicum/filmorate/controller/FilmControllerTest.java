@@ -6,8 +6,9 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import ru.yandex.practicum.filmorate.config.DurationAdapter;
-import ru.yandex.practicum.filmorate.config.LocalDateTypeAdapter;
+import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.util.DurationAdapterUtil;
+import ru.yandex.practicum.filmorate.util.LocalDateTypeAdapterUtil;
 import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Film;
 
@@ -16,7 +17,7 @@ import java.time.LocalDate;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static ru.yandex.practicum.filmorate.controller.FilmController.MIN_FILM_REALISE_DATE;
+import static ru.yandex.practicum.filmorate.service.ValidationService.MIN_FILM_REALISE_DATE;
 
 @SpringBootTest
 class FilmControllerTest {
@@ -28,8 +29,8 @@ class FilmControllerTest {
     @BeforeAll
     static void setUpGson() {
         gson = new GsonBuilder()
-                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapter())
-                .registerTypeAdapter(Duration.class, new DurationAdapter())
+                .registerTypeAdapter(LocalDate.class, new LocalDateTypeAdapterUtil())
+                .registerTypeAdapter(Duration.class, new DurationAdapterUtil())
                 .create();
     }
 
@@ -63,7 +64,7 @@ class FilmControllerTest {
     @Test
     void shouldUpdateFilm() throws ValidationException {
         Film filmReturn = filmController.add(filmMatrix);
-        int idFilmReturned = filmReturn.getId();
+        long idFilmReturned = filmReturn.getId();
         filmReturn.setId(idFilmReturned);
         filmReturn.setName("Triangle of Sadness");
         filmReturn.setDescription("fresh");
@@ -75,13 +76,13 @@ class FilmControllerTest {
 
     @Test
     void shouldMissIdWhenUpdate() throws ValidationException {
-        int newId = filmController.add(filmMatrix).getId() + 999;
+        long newId = filmController.add(filmMatrix).getId() + 999;
         filmMatrix.setId(newId);
         filmMatrix.setName("new description");
-        ValidationException exception = assertThrows(
-                ValidationException.class,
+        FilmNotFoundException exception = assertThrows(
+                FilmNotFoundException.class,
                 () -> filmController.update(filmMatrix)
         );
-        assertEquals("Фильм с Id '" + newId + "' не найден в сервисе", exception.getMessage());
+        assertEquals("Фильм с Id '" + newId + "' не найден", exception.getMessage());
     }
 }
