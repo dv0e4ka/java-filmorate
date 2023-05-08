@@ -19,7 +19,7 @@ public class FilmController {
 
     @PostMapping
     public Film add(@Valid @RequestBody Film film) {
-        log.info("поступил запрос на добавление фильма с id " + film.getId());
+        log.info("поступил запрос на добавление фильма с name=" + film.getName());
         return filmService.add(film);
     }
 

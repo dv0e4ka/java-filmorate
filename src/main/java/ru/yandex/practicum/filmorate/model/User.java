@@ -12,11 +12,11 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+    private long id;
     @Pattern(regexp = "\\S+")
     @NotEmpty
     @NotBlank
     private String login;
-    private long id;
     @Email
     private String email;
     private String name;

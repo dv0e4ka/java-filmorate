@@ -20,12 +20,13 @@ public class Film {
     private LocalDate releaseDate;
     @Min(1)
     private int duration;
+    private Mpa mpa;
+    private Set<Genre> genres = new HashSet<>();
     private Set<Long> likes = new HashSet<>();
 
     public void addLike(long id) {
         likes.add(id);
     }
-
     public void deleteLike(long id) {
         likes.remove(id);
     }

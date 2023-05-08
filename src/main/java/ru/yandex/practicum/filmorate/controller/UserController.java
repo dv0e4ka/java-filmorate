@@ -19,7 +19,7 @@ public class UserController {
 
     @PostMapping
     public User add(@Valid @RequestBody User user) {
-        log.info("получен запрос на добавления пользователя с id " + user.getId());
+        log.info("получен запрос на добавления пользователя login=" + user.getLogin());
         return userService.add(user);
     }
 

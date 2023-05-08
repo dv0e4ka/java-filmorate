@@ -1,15 +1,14 @@
-package ru.yandex.practicum.filmorate.storage.film;
+package ru.yandex.practicum.filmorate.dao.film.implement;
 
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Component;
+import ru.yandex.practicum.filmorate.dao.film.FilmDao;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.*;
 
-@Component
 @Slf4j
-public class InMemoryFilmStorage implements FilmStorage {
+public class InMemoryFilmDao implements FilmDao {
     private final Map<Long, Film> filmMap = new HashMap<>();
     private long id = 0;
 
