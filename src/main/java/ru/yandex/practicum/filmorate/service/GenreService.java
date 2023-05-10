@@ -27,6 +27,7 @@ public class GenreService {
     public void deleteGenre(long id) {
         genreDao.deleteGenre(id);
     }
+    
     public List<Genre> getALlGenreByFilm(long id) {
         return genreDao.getALlGenreByFilm(id);
     }
