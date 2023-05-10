@@ -51,12 +51,12 @@ public class UserDaoImpl implements UserDao {
     public User update(User user) {
         String sql = "UPDATE USER_MAN SET NAME=?, LOGIN=?, EMAIL=?, BIRTHDAY=? WHERE ID=?";
         Date date = Date.valueOf(user.getBirthday());
-        int isUpdated = jdbcTemplate.update(sql
-                , user.getName()
-                , user.getLogin()
-                , user.getEmail()
-                , date
-                , user.getId()
+        int isUpdated = jdbcTemplate.update(sql,
+                user.getName(),
+                user.getLogin(),
+                user.getEmail(),
+                date,
+                user.getId()
         );
         if (isUpdated == 0) {
             throw new UserNotFoundException("не найден юзер с id=" + user.getId());

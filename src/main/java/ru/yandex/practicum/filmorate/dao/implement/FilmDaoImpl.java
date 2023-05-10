@@ -64,13 +64,13 @@ public class FilmDaoImpl implements FilmDao {
                 "mpa=? " +
                 "WHERE id=?";
         Date date = Date.valueOf(film.getReleaseDate());
-        int sqlResult = jdbcTemplate.update(filmSql
-                , film.getName()
-                , film.getDescription()
-                , date
-                , film.getDuration()
-                , film.getMpa().getId()
-                , film.getId()
+        int sqlResult = jdbcTemplate.update(filmSql,
+                film.getName(),
+                film.getDescription(),
+                date,
+                film.getDuration(),
+                film.getMpa().getId(),
+                film.getId()
         );
         if (film.getGenres().isEmpty()) {
             genreService.deleteGenre(film.getId());
