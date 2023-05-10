@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.implement;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -13,6 +14,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @Repository
+@Slf4j
 public class GenreDaoImpl implements GenreDao {
     private final JdbcTemplate jdbcTemplate;
 
@@ -28,7 +30,9 @@ public class GenreDaoImpl implements GenreDao {
                     "VALUES (?, ?)";
             try {
                 jdbcTemplate.update(sql, id, genre.getId());
-            } catch (Exception e) {}
+            } catch (Exception e) {
+                log.info("дублирование жанра {}, у фильма id={}", genre.getId(), id);
+            }
         }
     }
 
