@@ -97,7 +97,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public Film getById(long id) {
-        String sqlFilm = "SELECT f.*, " +
+        String sqlFilm = "SELECT f.id, f.name, f.description, f.releasedate, f.duration, f.mpa, " +
                 "m.name AS mpa_name " +
                 "FROM FILM AS f " +
                 "INNER JOIN RATING_MPA AS m ON f.MPA=m.ID " +
@@ -111,7 +111,7 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getAllFilms() {
-        String sql = "SELECT f.*, " +
+        String sql = "SELECT f.id, f.name, f.description, f.releasedate, f.duration, f.mpa, " +
                 "m.name AS mpa_name " +
                 "FROM FILM AS f " +
                 "INNER JOIN RATING_MPA AS m ON f.mpa=m.ID";

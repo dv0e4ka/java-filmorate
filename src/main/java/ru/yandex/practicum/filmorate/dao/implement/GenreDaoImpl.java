@@ -60,7 +60,7 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public Genre getGenre(int id) {
-        String sql = "SELECT * FROM GENRE_TYPES WHERE ID=?";
+        String sql = "SELECT ID, NAME FROM GENRE_TYPES WHERE ID=?";
         try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeGenre(rs), id);
         } catch (DataAccessException e) {
@@ -70,7 +70,7 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public List<Genre> getAllGenres() {
-        String sql = "SELECT * FROM GENRE_TYPES ORDER BY ID";
+        String sql = "SELECT ID, NAME FROM GENRE_TYPES ORDER BY ID";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeGenre(rs));
     }
 

@@ -76,7 +76,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User getById(long id) {
-        String query = "SELECT * FROM USER_MAN WHERE ID=?";
+        String query = "SELECT ID, LOGIN, EMAIL, NAME, BIRTHDAY FROM USER_MAN WHERE ID=?";
         try {
             return jdbcTemplate.queryForObject(query, (rs, rowNum) -> makeUser(rs), id);
         } catch (EmptyResultDataAccessException e) {
@@ -86,7 +86,7 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public List<User> getAllUsers() {
-        return jdbcTemplate.query("SELECT * FROM USER_MAN", (rs, rowNum) -> makeUser(rs));
+        return jdbcTemplate.query("SELECT ID, LOGIN, EMAIL, NAME, BIRTHDAY FROM USER_MAN", (rs, rowNum) -> makeUser(rs));
     }
 
     @Override
@@ -103,7 +103,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public void addFriend(long userId, long friendId) {
         boolean isFriendship;
-        String sqlIsFriend = "SELECT * " +
+        String sqlIsFriend = "SELECT ID, ID_USER, ID_FRIEND, FRIENDSHIP_STATUS " +
                 "FROM friends " +
                 "WHERE id_user=? AND id_friend=?";
         SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlIsFriend, friendId, userId);

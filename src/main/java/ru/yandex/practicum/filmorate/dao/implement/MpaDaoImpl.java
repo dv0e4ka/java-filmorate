@@ -23,7 +23,7 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public Mpa getMpa(int id) {
-        String sql = "SELECT * FROM rating_mpa  WHERE id=?";
+        String sql = "SELECT ID, NAME FROM rating_mpa  WHERE id=?";
         try {
             return jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeMpa(rs), id);
         } catch (EmptyResultDataAccessException e) {
@@ -33,7 +33,7 @@ public class MpaDaoImpl implements MpaDao {
 
     @Override
     public List<Mpa> getMpaAll() {
-        String sql = "SELECT * FROM rating_mpa ORDER BY id";
+        String sql = "SELECT ID, NAME FROM rating_mpa ORDER BY id";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeMpa(rs));
     }
 

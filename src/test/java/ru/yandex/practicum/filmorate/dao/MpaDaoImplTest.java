@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao.implement;
+package ru.yandex.practicum.filmorate.dao;
 
 import static org.junit.jupiter.api.Assertions.*;
 
