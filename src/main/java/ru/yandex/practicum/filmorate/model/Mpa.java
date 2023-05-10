@@ -12,8 +12,4 @@ import lombok.NoArgsConstructor;
 public class Mpa {
     int id;
     String name;
-
-    public Mpa(int id) {
-        this.id = id;
-    }
 }

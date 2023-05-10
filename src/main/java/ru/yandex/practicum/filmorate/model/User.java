@@ -23,12 +23,4 @@ public class User {
     @PastOrPresent
     private LocalDate birthday;
     private final Set<Long> friends = new HashSet<>();
-
-    public void addFriend(long id) {
-        friends.add(id);
-    }
-
-    public void deleteFriend(long id) {
-        friends.remove(id);
-    }
 }

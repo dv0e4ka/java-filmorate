@@ -61,11 +61,13 @@ public class UserController {
 
     @GetMapping("/{id}/friends")
     public List getFriends(@PathVariable("id") long id) {
+        log.info("получен запрос на получение списка друзей id {}", id);
         return userService.getUserFriends(id);
     }
 
     @GetMapping("/{id}/friends/common/{otherId}")
     public List getCommonFriends(@PathVariable long id, @PathVariable long otherId) {
+        log.info("получен запрос на получение общего списка друзей id {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao.film.implement;
+package ru.yandex.practicum.filmorate.dao.implement;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,12 +7,11 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.film.FilmDao;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.SqlQueryException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
+import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -25,16 +24,19 @@ import java.util.Objects;
 @Slf4j
 public class FilmDaoImpl implements FilmDao {
     private final JdbcTemplate jdbcTemplate;
+    private final GenreService genreService;
 
     @Autowired
-    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
+    public FilmDaoImpl(JdbcTemplate jdbcTemplate, GenreService genreService) {
         this.jdbcTemplate = jdbcTemplate;
+        this.genreService = genreService;
     }
 
     @Override
     public Film add(Film film) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
-        String filmSql = "INSERT INTO FILM (name, description, releaseDate, duration, mpa) VALUES(?, ?, ?, ?, ?)";
+        String filmSql = "INSERT INTO FILM (name, description, releaseDate, duration, mpa) " +
+                "VALUES(?, ?, ?, ?, ?)";
         jdbcTemplate.update(connection -> {
             String[] keyColumn = {"id"};
             PreparedStatement ps = connection.prepareStatement(filmSql, keyColumn);
@@ -46,13 +48,21 @@ public class FilmDaoImpl implements FilmDao {
             ps.setInt(5, film.getMpa().getId());
             return ps;
         }, keyHolder);
-
-        int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
+        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        if (!film.getGenres().isEmpty()) {
+            genreService.addGenre(id, film.getGenres());
+        }
         return getById(id);
     }
+
     @Override
     public Film update(Film film) {
-        String filmSql = "UPDATE FILM SET name=?, description=?, releaseDate=?, duration=?, mpa=? WHERE id=?";
+        String filmSql = "UPDATE FILM SET name=?, " +
+                "description=?, " +
+                "releaseDate=?, " +
+                "duration=?, " +
+                "mpa=? " +
+                "WHERE id=?";
         Date date = Date.valueOf(film.getReleaseDate());
         int sqlResult = jdbcTemplate.update(filmSql
                 , film.getName()
@@ -62,6 +72,11 @@ public class FilmDaoImpl implements FilmDao {
                 , film.getMpa().getId()
                 , film.getId()
         );
+        if (film.getGenres().isEmpty()) {
+            genreService.deleteGenre(film.getId());
+        } else {
+            genreService.updateGenre(film.getId(), film.getGenres());
+        }
         if (sqlResult == 0) {
             throw new FilmNotFoundException("не найден фильм для обновления с id=" + film.getId());
         } else {
@@ -104,12 +119,43 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
+    public void addLike(long filmId, long userId) {
+        String sql = "INSERT INTO LIKES (ID_FILM, ID_USER) VALUES (?, ?)";
+        jdbcTemplate.update(sql, filmId, userId);
+    }
+
+    @Override
+    public void deleteLike(long filmId, long userId) {
+        String sql = "DELETE FROM LIKES WHERE ID_FILM=? AND ID_USER=?";
+        jdbcTemplate.update(sql, userId, filmId);
+    }
+
+    @Override
+    public List<Film> getMostPopularFilm(int count) {
+        String sql0 = "SELECT DISTINCT(ID_FILM) FROM LIKES ORDER BY COUNT(ID_USER) DESC LIMIT ?";
+        String sql = "SELECT L.ID_FILM as likes_count, " +
+                "F.ID, " +
+                "F.NAME, " +
+                "F.DESCRIPTION, " +
+                "F.RELEASEDATE, " +
+                "F.DURATION, " +
+                "F.MPA, " +
+                "RM.NAME AS MPA_NAME " +
+                "FROM FILM AS F " +
+                "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                "ORDER BY likes_count DESC " +
+                "LIMIT ?";
+        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+    }
+
+    @Override
     public boolean isContains(long id) {
         String sql = "SELECT ID " +
                 "FROM FILM " +
                 "WHERE ID=?";
         try {
-            jdbcTemplate.queryForObject(sql, Integer.class, id);
+            jdbcTemplate.queryForObject(sql, Long.class, id);
             return true;
         } catch (EmptyResultDataAccessException e) {
             return false;
@@ -117,18 +163,24 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     private Film makeFilm(ResultSet resultSet) throws SQLException {
+        long id = resultSet.getInt("id");
         Film film = new Film();
-        film.setId(resultSet.getInt("id"));
+        film.setId(id);
         film.setName(resultSet.getString("name"));
         film.setDescription(resultSet.getString("description"));
         film.setDuration(resultSet.getInt("duration"));
-
-        Date release = resultSet.getDate("releaseDate");
-        film.setReleaseDate(release.toLocalDate());
+        film.setReleaseDate(resultSet.getDate("releaseDate").toLocalDate());
         Mpa mpa = new Mpa();
         mpa.setId(resultSet.getInt("mpa"));
         mpa.setName(resultSet.getString("mpa_name"));
         film.setMpa(mpa);
+        film.setGenres(genreService.getALlGenreByFilm(id));
+        film.setLikes(getLikes(id));
         return film;
+    }
+
+    private List<Long> getLikes(long id) {
+        String sql = "SELECT id_user FROM likes WHERE id_film=?";
+        return jdbcTemplate.queryForList(sql, Long.class, id);
     }
 }

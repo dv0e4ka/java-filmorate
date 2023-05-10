@@ -6,12 +6,10 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.dao.film.FilmDao;
-import ru.yandex.practicum.filmorate.dao.user.UserDao;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -47,40 +45,29 @@ public class FilmService {
         return filmDao.getAllFilms();
     }
 
-    public Film addLike(long filmId, long userId) {
+    public void addLike(long filmId, long userId) {
         if (userDao.getById(userId) == null) {
             throw new UserNotFoundException("не найден пользователь с id " + userId);
         }
         if (!filmDao.isContains(filmId)) {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
-        Film film = filmDao.getById(filmId);
-        film.addLike(userId);
+        filmDao.addLike(filmId, userId);
         log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId + "!");
-        return film;
     }
 
-    public Film deleteLike(long userId, long filmId) {
+    public void deleteLike(long filmId, long userId) {
         if (userDao.getById(userId) == null) {
             throw new UserNotFoundException("не найден пользователь с id " + userId);
         }
         if (!filmDao.isContains(filmId)) {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
-        Film film = filmDao.getById(filmId);
-        film.deleteLike(userId);
+        filmDao.deleteLike(userId, filmId);
         log.info("Пользователь с id " + userId + " удалил лайк фильму с id " + filmId + "!");
-        return film;
     }
 
-    public List getPopularFilms(int count) {
-        if (filmDao.getAllFilms().size() == 0) {
-            throw new FilmNotFoundException("фильмов в библиотке нет");
-        }
-        List<Film> films = getAllFilms()
-                .stream()
-                .sorted(Comparator.comparingInt(film -> -1 * film.getLikes().size()))
-                .limit(count).collect(Collectors.toList());
-        return films;
+    public List<Film> getPopularFilms(int count) {
+        return filmDao.getMostPopularFilm(count);
     }
 }

@@ -1,4 +1,4 @@
-package ru.yandex.practicum.filmorate.dao.user.implement;
+package ru.yandex.practicum.filmorate.dao.implement;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -6,16 +6,13 @@ import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
-import ru.yandex.practicum.filmorate.dao.user.UserDao;
-import ru.yandex.practicum.filmorate.exception.SqlQueryException;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
-import java.sql.Date;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.List;
 import java.util.Objects;
 
@@ -23,7 +20,7 @@ import java.util.Objects;
 @Slf4j
 public class UserDaoImpl implements UserDao {
     private final JdbcTemplate jdbcTemplate;
-    
+
     @Autowired
     public UserDaoImpl (JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
@@ -46,7 +43,7 @@ public class UserDaoImpl implements UserDao {
             ps.setDate(4, date);
             return ps;
         }, keyHolder);
-        int id = Objects.requireNonNull(keyHolder.getKey()).intValue();
+        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
         return getById(id);
     }
 
@@ -77,7 +74,6 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-
     @Override
     public User getById(long id) {
         String query = "SELECT * FROM USER_MAN WHERE ID=?";
@@ -102,6 +98,39 @@ public class UserDaoImpl implements UserDao {
         } catch (EmptyResultDataAccessException e) {
             return false;
         }
+    }
+
+    @Override
+    public void addFriend(long userId, long friendId) {
+        boolean isFriendship;
+        String sqlIsFriend = "SELECT * " +
+                "FROM friends " +
+                "WHERE id_user=? AND id_friend=?";
+        SqlRowSet sqlRowSet = jdbcTemplate.queryForRowSet(sqlIsFriend, friendId, userId);
+        isFriendship = sqlRowSet.next();
+        String sqlAddFriend = "INSERT INTO friends (id_user, id_friend, friendship_status) " +
+                "VALUES (?, ?, ?)";
+        jdbcTemplate.update(sqlAddFriend, userId, friendId, isFriendship);
+        if (isFriendship) {
+            String sqlStatus = "UPDATE friends SET friendship_status = true " +
+                    "WHERE id_user=? AND id_friend=?";
+            jdbcTemplate.update(sqlStatus, friendId, userId);
+        }
+    }
+
+    @Override
+    public void deleteFriend(long userId, long friendId) {
+        String sql = "DELETE FROM FRIENDS WHERE ID_USER=? AND ID_FRIEND=?";
+        jdbcTemplate.update(sql, userId, friendId);
+        String sqlStatus = "UPDATE friends SET friendship_status=false " +
+                "WHERE id_user=? AND id_friend=?";
+        jdbcTemplate.update(sqlStatus, friendId, userId);
+    }
+
+    @Override
+    public List<Long> getFriends(long id) {
+        String sql = "SELECT ID_FRIEND FROM FRIENDS WHERE ID_USER=?";
+        return jdbcTemplate.queryForList(sql, Long.class, id);
     }
 
     private User makeUser(ResultSet resultSet) throws SQLException {

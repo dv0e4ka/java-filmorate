@@ -5,7 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
-import ru.yandex.practicum.filmorate.dao.user.UserDao;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,11 +13,6 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-
-
-    // TODO перенести проверки isContain сюда!
-
-
     private UserDao userDao;
 
     @Autowired
@@ -54,8 +49,7 @@ public class UserService {
         } else if (friend == null) {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
-            user.addFriend(friendId);
-            friend.addFriend(userId);
+            userDao.addFriend(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " теперь друзья!");
         }
     }
@@ -69,29 +63,29 @@ public class UserService {
         } else if (friend == null) {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
-            user.deleteFriend(friendId);
-            friend.deleteFriend(userId);
+            userDao.deleteFriend(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " больше не друзья!");
         }
     }
 
-    public List getUserFriends(long id) {
+    public List<User> getUserFriends(long id) {
         if (!userDao.isContains(id)) {
             throw new UserNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
         } else {
-            return userDao.getById(id).getFriends().stream()
-                    .map(userId -> userDao.getById(userId)).collect(Collectors.toList());
+            List<Long> friendIds = userDao.getFriends(id);
+            return friendIds.stream().map(this::getById).collect(Collectors.toList());
         }
     }
 
-    public List getCommonFriends(long id, long otherId) {
-        if (userDao.isContains(id) && userDao.isContains(otherId)) {
-            return userDao.getById(id).getFriends().stream()
-                    .filter(userDao.getById(otherId).getFriends()::contains)
-                    .map(userId -> userDao.getById(userId))
-                    .collect(Collectors.toList());
+    public List<User> getCommonFriends(long id, long friendId) {
+        if (userDao.isContains(id) && userDao.isContains(friendId)) {
+            List<Long> userFriends = userDao.getFriends(id);
+            List<Long> friendFriends = userDao.getFriends(friendId);
+            userFriends.retainAll(friendFriends);
+            return userFriends.stream().map(this::getById).collect(Collectors.toList());
         } else {
-            throw new UserNotFoundException("У пользователей с id " + id + " и " + otherId + " нет общих друзей");
+            throw new UserNotFoundException("Пользователь с Id " + id
+                    + " или пользователь с Id " + friendId + " не найден в сервисе");
         }
     }
 }
