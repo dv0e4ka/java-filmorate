@@ -3,14 +3,17 @@ package ru.yandex.practicum.filmorate.dao.implement;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.GenreDao;
 import ru.yandex.practicum.filmorate.exception.GenreNotFoundException;
 import ru.yandex.practicum.filmorate.model.Genre;
 
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -25,14 +28,23 @@ public class GenreDaoImpl implements GenreDao {
 
     @Override
     public void addGenre(long id, List<Genre> genres) {
-        for (Genre genre : genres) {
-            String sql = "INSERT INTO GENRE_FILM (ID_FILM, ID_GENRE) " +
-                    "VALUES (?, ?)";
-            try {
-                jdbcTemplate.update(sql, id, genre.getId());
-            } catch (Exception e) {
-                log.info("дублирование жанра {}, у фильма id={}", genre.getId(), id);
-            }
+        String sql = "INSERT INTO GENRE_FILM(ID_FILM, ID_GENRE) " +
+                "VALUES (?, ?)";
+        try {
+            jdbcTemplate.batchUpdate(sql, new BatchPreparedStatementSetter() {
+                @Override
+                public void setValues(PreparedStatement ps, int i) throws SQLException {
+                    ps.setLong(1, id);
+                    ps.setInt(2, genres.get(i).getId());
+                }
+
+                @Override
+                public int getBatchSize() {
+                    return genres.size();
+                }
+            });
+        } catch (Exception e) {
+            log.info("дублирование жанра у фильма id={}", id);
         }
     }
 
