@@ -42,7 +42,7 @@ public class GenreDaoImpl implements GenreDao {
                     return genres.size();
                 }
             });
-        } catch (Exception e) {
+        } catch (DataAccessException e) {
             log.info("дублирование жанра у фильма id={}", id);
         }
         return getALlGenreByFilm(id);
