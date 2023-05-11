@@ -5,9 +5,9 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.util.List;
 
 public interface GenreDao {
-    void addGenre(long id, List<Genre> genres);
+    List<Genre> addGenre(long id, List<Genre> genres);
 
-    void updateGenre(long id, List<Genre> genres);
+    List<Genre>  updateGenre(long id, List<Genre> genres);
 
     void deleteGenre(long id);
 

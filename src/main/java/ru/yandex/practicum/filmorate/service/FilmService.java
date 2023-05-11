@@ -8,6 +8,7 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
+import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
 
@@ -16,33 +17,48 @@ import java.util.List;
 public class FilmService {
     private final FilmDao filmDao;
     private final UserDao userDao;
+    private final GenreService genreService;
 
     @Autowired
-    public FilmService(FilmDao filmDao, UserDao userDao) {
+    public FilmService(FilmDao filmDao, UserDao userDao, GenreService genreService) {
         this.filmDao = filmDao;
         this.userDao = userDao;
+        this.genreService = genreService;
     }
 
     public Film add(Film film) {
         ValidationService.validateFilm(film);
-        return filmDao.add(film);
+        Film addedFilm = filmDao.add(film);
+        List<Genre> addedGenres = genreService.addGenre(addedFilm.getId(), film.getGenres());
+        addedFilm.setGenres(addedGenres);
+        return addedFilm;
     }
 
     public Film update(Film film) {
         ValidationService.validateFilm(film);
-        return filmDao.update(film);
+        Film updatedFilm = filmDao.update(film);
+        List<Genre> updatedGenres = genreService.updateGenre(film.getId(), film.getGenres());
+        updatedFilm.setGenres(updatedGenres);
+        return updatedFilm;
     }
 
     public void delete(long id) {
         filmDao.delete(id);
+        genreService.deleteGenre(id);
     }
 
     public Film getById(long id) {
-        return filmDao.getById(id);
+        Film film = filmDao.getById(id);
+        film.setGenres(genreService.getALlGenreByFilm(id));
+        return film;
     }
 
     public List<Film> getAllFilms() {
-        return filmDao.getAllFilms();
+        List<Film> filmList = filmDao.getAllFilms();
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+        }
+        return filmList;
     }
 
     public void addLike(long filmId, long userId) {
@@ -68,6 +84,10 @@ public class FilmService {
     }
 
     public List<Film> getPopularFilms(int count) {
-        return filmDao.getMostPopularFilm(count);
+        List<Film> filmList = filmDao.getMostPopularFilm(count);
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+        }
+        return filmList;
     }
 }

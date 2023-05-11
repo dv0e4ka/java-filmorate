@@ -16,12 +16,12 @@ public class GenreService {
         this.genreDao = genreDao;
     }
 
-    public void addGenre(long id, List<Genre> genres) {
-        genreDao.addGenre(id, genres);
+    public List<Genre> addGenre(long id, List<Genre> genres) {
+        return genreDao.addGenre(id, genres);
     }
 
-    public void updateGenre(long id, List<Genre> genres) {
-        genreDao.updateGenre(id, genres);
+    public List<Genre>  updateGenre(long id, List<Genre> genres) {
+        return genreDao.updateGenre(id, genres);
     }
 
     public void deleteGenre(long id) {

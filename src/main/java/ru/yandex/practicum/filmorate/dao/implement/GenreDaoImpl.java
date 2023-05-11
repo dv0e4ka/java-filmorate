@@ -13,7 +13,6 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Repository
@@ -27,7 +26,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public void addGenre(long id, List<Genre> genres) {
+    public List<Genre> addGenre(long id, List<Genre> genres) {
         String sql = "INSERT INTO GENRE_FILM(ID_FILM, ID_GENRE) " +
                 "VALUES (?, ?)";
         try {
@@ -46,12 +45,14 @@ public class GenreDaoImpl implements GenreDao {
         } catch (Exception e) {
             log.info("дублирование жанра у фильма id={}", id);
         }
+        return getALlGenreByFilm(id);
     }
 
     @Override
-    public void updateGenre(long id, List<Genre> genres) {
+    public List<Genre>  updateGenre(long id, List<Genre> genres) {
         deleteGenre(id);
         addGenre(id, genres);
+        return getALlGenreByFilm(id);
     }
 
     @Override

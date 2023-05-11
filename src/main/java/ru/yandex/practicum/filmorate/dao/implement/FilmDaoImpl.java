@@ -11,7 +11,6 @@ import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
-import ru.yandex.practicum.filmorate.service.GenreService;
 
 import java.sql.Date;
 import java.sql.PreparedStatement;
@@ -24,12 +23,10 @@ import java.util.Objects;
 @Slf4j
 public class FilmDaoImpl implements FilmDao {
     private final JdbcTemplate jdbcTemplate;
-    private final GenreService genreService;
 
     @Autowired
-    public FilmDaoImpl(JdbcTemplate jdbcTemplate, GenreService genreService) {
+    public FilmDaoImpl(JdbcTemplate jdbcTemplate) {
         this.jdbcTemplate = jdbcTemplate;
-        this.genreService = genreService;
     }
 
     @Override
@@ -49,9 +46,6 @@ public class FilmDaoImpl implements FilmDao {
             return ps;
         }, keyHolder);
         long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        if (!film.getGenres().isEmpty()) {
-            genreService.addGenre(id, film.getGenres());
-        }
         return getById(id);
     }
 
@@ -72,11 +66,6 @@ public class FilmDaoImpl implements FilmDao {
                 film.getMpa().getId(),
                 film.getId()
         );
-        if (film.getGenres().isEmpty()) {
-            genreService.deleteGenre(film.getId());
-        } else {
-            genreService.updateGenre(film.getId(), film.getGenres());
-        }
         if (sqlResult == 0) {
             throw new FilmNotFoundException("не найден фильм для обновления с id=" + film.getId());
         } else {
@@ -132,7 +121,6 @@ public class FilmDaoImpl implements FilmDao {
 
     @Override
     public List<Film> getMostPopularFilm(int count) {
-        String sql0 = "SELECT DISTINCT(ID_FILM) FROM LIKES ORDER BY COUNT(ID_USER) DESC LIMIT ?";
         String sql = "SELECT L.ID_FILM as likes_count, " +
                 "F.ID, " +
                 "F.NAME, " +
@@ -174,7 +162,6 @@ public class FilmDaoImpl implements FilmDao {
         mpa.setId(resultSet.getInt("mpa"));
         mpa.setName(resultSet.getString("mpa_name"));
         film.setMpa(mpa);
-        film.setGenres(genreService.getALlGenreByFilm(id));
         film.setLikes(getLikes(id));
         return film;
     }
