@@ -6,81 +6,88 @@ import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
-import ru.yandex.practicum.filmorate.storage.film.FilmStorage;
-import ru.yandex.practicum.filmorate.storage.user.UserStorage;
+import ru.yandex.practicum.filmorate.dao.FilmDao;
+import ru.yandex.practicum.filmorate.dao.UserDao;
+import ru.yandex.practicum.filmorate.model.Genre;
 
-import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class FilmService {
-    private final FilmStorage filmStorage;
-    private final UserStorage userStorage;
+    private final FilmDao filmDao;
+    private final UserDao userDao;
+    private final GenreService genreService;
 
     @Autowired
-    public FilmService(FilmStorage filmStorage, UserStorage userStorage) {
-        this.filmStorage = filmStorage;
-        this.userStorage = userStorage;
+    public FilmService(FilmDao filmDao, UserDao userDao, GenreService genreService) {
+        this.filmDao = filmDao;
+        this.userDao = userDao;
+        this.genreService = genreService;
     }
 
     public Film add(Film film) {
         ValidationService.validateFilm(film);
-        return filmStorage.add(film);
+        Film addedFilm = filmDao.add(film);
+        List<Genre> addedGenres = genreService.addGenre(addedFilm.getId(), film.getGenres());
+        addedFilm.setGenres(addedGenres);
+        return addedFilm;
     }
 
     public Film update(Film film) {
         ValidationService.validateFilm(film);
-        return filmStorage.update(film);
+        Film updatedFilm = filmDao.update(film);
+        List<Genre> updatedGenres = genreService.updateGenre(film.getId(), film.getGenres());
+        updatedFilm.setGenres(updatedGenres);
+        return updatedFilm;
     }
 
     public void delete(long id) {
-        filmStorage.delete(id);
+        filmDao.delete(id);
+        genreService.deleteGenre(id);
     }
 
     public Film getById(long id) {
-        return filmStorage.getById(id);
+        Film film = filmDao.getById(id);
+        film.setGenres(genreService.getALlGenreByFilm(id));
+        return film;
     }
 
     public List<Film> getAllFilms() {
-        return filmStorage.getAllFilms();
+        List<Film> filmList = filmDao.getAllFilms();
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+        }
+        return filmList;
     }
 
-    public Film addLike(long filmId, long userId) {
-        if (userStorage.getById(userId) == null) {
+    public void addLike(long filmId, long userId) {
+        if (userDao.getById(userId) == null) {
             throw new UserNotFoundException("не найден пользователь с id " + userId);
         }
-        if (!filmStorage.isContains(filmId)) {
+        if (!filmDao.isContains(filmId)) {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
-        Film film = filmStorage.getById(filmId);
-        film.addLike(userId);
+        filmDao.addLike(filmId, userId);
         log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId + "!");
-        return film;
     }
 
-    public Film deleteLike(long userId, long filmId) {
-        if (userStorage.getById(userId) == null) {
+    public void deleteLike(long filmId, long userId) {
+        if (userDao.getById(userId) == null) {
             throw new UserNotFoundException("не найден пользователь с id " + userId);
         }
-        if (!filmStorage.isContains(filmId)) {
+        if (!filmDao.isContains(filmId)) {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
-        Film film = filmStorage.getById(filmId);
-        film.deleteLike(userId);
+        filmDao.deleteLike(userId, filmId);
         log.info("Пользователь с id " + userId + " удалил лайк фильму с id " + filmId + "!");
-        return film;
     }
 
-    public List getPopularFilms(int count) {
-        if (filmStorage.getAllFilms().size() == 0) {
-            throw new FilmNotFoundException("фильмов в библиотке нет");
+    public List<Film> getPopularFilms(int count) {
+        List<Film> filmList = filmDao.getMostPopularFilm(count);
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
         }
-        List<Film> films = getAllFilms()
-                .stream()
-                .sorted(Comparator.comparingInt(film -> -1 * film.getLikes().size()))
-                .limit(count).collect(Collectors.toList());
-        return films;
+        return filmList;
     }
 }

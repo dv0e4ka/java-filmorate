@@ -12,23 +12,15 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User {
+    private long id;
     @Pattern(regexp = "\\S+")
     @NotEmpty
     @NotBlank
     private String login;
-    private long id;
     @Email
     private String email;
     private String name;
     @PastOrPresent
     private LocalDate birthday;
     private final Set<Long> friends = new HashSet<>();
-
-    public void addFriend(long id) {
-        friends.add(id);
-    }
-
-    public void deleteFriend(long id) {
-        friends.remove(id);
-    }
 }
