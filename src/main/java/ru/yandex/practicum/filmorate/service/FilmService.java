@@ -83,8 +83,8 @@ public class FilmService {
         log.info("Пользователь с id " + userId + " удалил лайк фильму с id " + filmId + "!");
     }
 
-    public List<Film> getPopularFilms(int count) {
-        List<Film> filmList = filmDao.getMostPopularFilm(count);
+    public List<Film> getPopularFilms(int count, int genreId, int year) {
+        List<Film> filmList = filmDao.getMostPopularFilm(count, genreId, year);
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
         }

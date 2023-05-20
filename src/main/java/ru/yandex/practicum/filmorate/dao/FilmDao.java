@@ -19,7 +19,7 @@ public interface FilmDao {
 
     void deleteLike(long filmId, long userId);
 
-    List<Film> getMostPopularFilm(int count);
+    List<Film> getMostPopularFilm(int count, int genreId, int year);
 
     boolean isContains(long id);
 }
