@@ -59,12 +59,12 @@ public class FilmController {
     @PutMapping("/{filmId}/like/{userId}")
     public void addLike(@PathVariable long filmId, @PathVariable long userId) {
         filmService.addLike(filmId, userId);
-        log.info("поступил запрос на добавление лайка на фильм с id " + filmId + " от пользователя с id " + userId);
+        log.info("поступил запрос на добавление лайка к фильму с id " + filmId + " от пользователя с id " + userId);
     }
 
     @DeleteMapping("/{filmId}/like/{userId}")
     public void deleteLike(@PathVariable long filmId, @PathVariable long userId) {
-        log.info("поступил запрос на добавление лайка на фильм с id " + filmId + " от пользователя с id " + userId);
+        log.info("поступил запрос на удаление лайка у фильма с id " + filmId + " от пользователя с id " + userId);
         filmService.deleteLike(filmId, userId);
     }
 
