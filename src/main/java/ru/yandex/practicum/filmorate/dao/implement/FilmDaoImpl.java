@@ -16,6 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -120,21 +121,78 @@ public class FilmDaoImpl implements FilmDao {
     }
 
     @Override
-    public List<Film> getMostPopularFilm(int count) {
-        String sql = "SELECT L.ID_FILM as likes_count, " +
-                "F.ID, " +
-                "F.NAME, " +
-                "F.DESCRIPTION, " +
-                "F.RELEASEDATE, " +
-                "F.DURATION, " +
-                "F.MPA, " +
-                "RM.NAME AS MPA_NAME " +
-                "FROM FILM AS F " +
-                "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
-                "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
-                "ORDER BY likes_count DESC " +
-                "LIMIT ?";
-        return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+    public List<Film> getMostPopularFilm(int count, int genreId, int year) {
+        List<Film> filmList = new ArrayList<>();
+        if (genreId == 0 && year == 0) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "ORDER BY F.ID , likes_count DESC " +
+                    "LIMIT ?";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
+        }
+        if (genreId != 0 && year == 0) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN GENRE_FILM GF on F.ID = GF.ID_FILM " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "WHERE GF.ID_GENRE = ? " +
+                    "ORDER BY F.ID , likes_count DESC " +
+                    "LIMIT ?";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), genreId, count);
+        }
+        if (genreId == 0 && year != 0) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "WHERE EXTRACT(YEAR FROM F.RELEASEDATE) = ? " +
+                    "ORDER BY F.ID , likes_count DESC " +
+                    "LIMIT ?";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, count);
+        }
+        if (genreId != 0 && year != 0) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN GENRE_FILM GF on F.ID = GF.ID_FILM " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "WHERE EXTRACT(YEAR FROM F.RELEASEDATE) = ? AND GF.ID_GENRE = ?" +
+                    "ORDER BY F.ID , likes_count DESC " +
+                    "LIMIT ?";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, genreId, count);
+        }
+        return filmList;
     }
 
     @Override
