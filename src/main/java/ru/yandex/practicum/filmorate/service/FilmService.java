@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.List;
+import java.util.Set;
 
 @Service
 @Slf4j
@@ -55,6 +56,14 @@ public class FilmService {
 
     public List<Film> getAllFilms() {
         List<Film> filmList = filmDao.getAllFilms();
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+        }
+        return filmList;
+    }
+
+    public Set<Film> getCommonFilms(long userId, long friendId) {
+        Set<Film> filmList = filmDao.getCommonFilms(userId, friendId);
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
         }
