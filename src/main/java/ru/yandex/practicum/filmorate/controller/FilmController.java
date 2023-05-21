@@ -30,8 +30,8 @@ public class FilmController {
         return filmService.update(film);
     }
 
-    @DeleteMapping
-    public void delete(int id) {
+    @DeleteMapping("/{id}")
+    public void delete(@PathVariable int id) {
         log.info("поступил запрос на удаление фильма с id " + id);
         filmService.delete(id);
     }
