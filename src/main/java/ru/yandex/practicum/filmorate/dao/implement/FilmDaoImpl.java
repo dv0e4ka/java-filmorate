@@ -135,7 +135,7 @@ public class FilmDaoImpl implements FilmDao {
                     "FROM FILM AS F " +
                     "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
                     "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
-                    "ORDER BY F.ID , likes_count DESC " +
+                    "ORDER BY likes_count DESC, F.ID " +
                     "LIMIT ?";
             filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), count);
         }
