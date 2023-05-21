@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Director;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
@@ -19,12 +20,14 @@ public class FilmService {
     private final FilmDao filmDao;
     private final UserDao userDao;
     private final GenreService genreService;
+    private final DirectorService directorService;
 
     @Autowired
-    public FilmService(FilmDao filmDao, UserDao userDao, GenreService genreService) {
+    public FilmService(FilmDao filmDao, UserDao userDao, GenreService genreService, DirectorService directorService) {
         this.filmDao = filmDao;
         this.userDao = userDao;
         this.genreService = genreService;
+        this.directorService = directorService;
     }
 
     public Film add(Film film) {
@@ -32,6 +35,8 @@ public class FilmService {
         Film addedFilm = filmDao.add(film);
         List<Genre> addedGenres = genreService.addGenre(addedFilm.getId(), film.getGenres());
         addedFilm.setGenres(addedGenres);
+        List<Director> addedDirectors = directorService.addDirectorFilm(addedFilm.getId(), film.getDirectors());
+        addedFilm.setDirectors(addedDirectors);
         return addedFilm;
     }
 
@@ -40,6 +45,8 @@ public class FilmService {
         Film updatedFilm = filmDao.update(film);
         List<Genre> updatedGenres = genreService.updateGenre(film.getId(), film.getGenres());
         updatedFilm.setGenres(updatedGenres);
+        List<Director> updatedDirectors = directorService.updateDirectorFilm(updatedFilm.getId(), film.getDirectors());
+        updatedFilm.setDirectors(updatedDirectors);
         return updatedFilm;
     }
 
@@ -52,6 +59,7 @@ public class FilmService {
     public Film getById(long id) {
         Film film = filmDao.getById(id);
         film.setGenres(genreService.getALlGenreByFilm(id));
+        film.setDirectors(directorService.getAllDirectorsByFilm(id));
         return film;
     }
 
@@ -59,6 +67,7 @@ public class FilmService {
         List<Film> filmList = filmDao.getAllFilms();
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+            film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));
         }
         return filmList;
     }
@@ -67,6 +76,7 @@ public class FilmService {
         Set<Film> filmList = filmDao.getCommonFilms(userId, friendId);
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+            film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));
         }
         return filmList;
     }
@@ -97,6 +107,7 @@ public class FilmService {
         List<Film> filmList = filmDao.getMostPopularFilm(count, genreId, year);
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+            film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));
         }
         return filmList;
     }
