@@ -16,9 +16,7 @@ import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Repository
 @Slf4j
@@ -106,6 +104,21 @@ public class FilmDaoImpl implements FilmDao {
                 "FROM FILM AS f " +
                 "INNER JOIN RATING_MPA AS m ON f.mpa=m.ID";
         return jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs));
+    }
+
+    @Override
+    public Set<Film> getCommonFilms(long userId, long friendId) {
+        String sql = "SELECT L.ID_FILM AS likes_count, " +
+                "F.ID, F.NAME, F.DESCRIPTION, F.RELEASEDATE, F.DURATION, F.MPA, " +
+                "RM.NAME AS mpa_name " +
+                "FROM FILM AS F " +
+                "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                "LEFT JOIN LIKES L1 on F.ID = L.ID_FILM " +
+                "JOIN RATING_MPA RM ON F.MPA = RM.ID " +
+                "WHERE L.ID_USER = ? AND L1.ID_USER = ? " +
+                "ORDER BY likes_count, F.ID ";
+        List<Film> filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
+        return new HashSet<>(filmList);
     }
 
     @Override

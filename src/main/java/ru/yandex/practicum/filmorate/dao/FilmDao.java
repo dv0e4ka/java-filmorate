@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.dao;
 import ru.yandex.practicum.filmorate.model.Film;
 
 import java.util.List;
+import java.util.Set;
 
 public interface FilmDao {
     Film add(Film film);
@@ -14,6 +15,8 @@ public interface FilmDao {
     Film getById(long id);
 
     List<Film> getAllFilms();
+
+    Set<Film> getCommonFilms(long userId, long friendId);
 
     void addLike(long filmId, long userId);
 

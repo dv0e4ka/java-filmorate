@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.service.FilmService;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Set;
 
 @RestController
 @RequestMapping("/films")
@@ -45,6 +46,13 @@ public class FilmController {
     public Film getById(@PathVariable long id) {
         log.info("поступил запрос получения фильма с id " + id);
         return filmService.getById(id);
+    }
+
+    @GetMapping("/common")
+    public Set getCommonFilms(@RequestParam(name = "userId") long userId,
+                              @RequestParam(name = "friendId") long friendId) {
+        log.info("поступил запрос на получение общих фильмов между пользователями с id " + userId + " и " + friendId);
+        return filmService.getCommonFilms(userId, friendId);
     }
 
     @PutMapping("/{filmId}/like/{userId}")
