@@ -63,8 +63,24 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
+<<<<<<< HEAD
     public ErrorResponse handle(DirectorNotFoundException e) {
         log.error(e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
+=======
+    public ErrorResponse handleReviewNotFoundException(ReviewNotFoundException e) {
+        log.error(e.getMessage());
+        return new ErrorResponse(e.getMessage());
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(IncorrectParameterException e) {
+        log.error(e.getMessage());
+        return new ErrorResponse(
+                String.format("Ошибка с полем \"%s\".", e.getParameter())
+        );
+    }
+>>>>>>> 4e1c965 (feat: добавить бизнес логику)
 }

@@ -13,7 +13,7 @@ public interface ReviewDao {
 
     Review getById(long id);
 
-   List getAllReviews(long filmId, int count);
+   List<Review> getAllReviews(long filmId, int count);
 
     void addLike(long id, long userId);
 
@@ -22,4 +22,10 @@ public interface ReviewDao {
     void addDislike(long id, long userId);
 
     void deleteDislike(long id, long userId);
+
+     boolean isContainReview(long id);
+
+     boolean hasAlreadyBeenLiked(long id, long userId);
+
+     boolean hasAlreadyBeenDisliked(long id, long userId);
 }
