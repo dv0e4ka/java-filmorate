@@ -2,12 +2,14 @@ package ru.yandex.practicum.filmorate.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.repository.query.ParameterOutOfBoundsException;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.dao.implement.FilmDaoImpl;
 import ru.yandex.practicum.filmorate.dao.implement.ReviewDaoImpl;
 import ru.yandex.practicum.filmorate.dao.implement.UserDaoImpl;
-import ru.yandex.practicum.filmorate.exception.*;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
+import ru.yandex.practicum.filmorate.exception.ReviewHasAlreadyBeenRatedException;
+import ru.yandex.practicum.filmorate.exception.ReviewHasNotBeenRatedException;
+import ru.yandex.practicum.filmorate.exception.ValidationException;
 import ru.yandex.practicum.filmorate.model.Review;
 
 import java.util.List;
@@ -41,7 +43,7 @@ public class ReviewService {
             throw new ValidationException("Поле 'isPositive' не должно быть пустым");
         }
         log.info("Добавлен отзыв к фильму {}", review.getFilmId());
-       return reviewDao.add(review);
+        return reviewDao.add(review);
     }
 
     public Review update(Review review) {
@@ -81,7 +83,7 @@ public class ReviewService {
         if (reviewDao.hasAlreadyBeenDisliked(id, userId)) {
             deleteDislike(id, userId);
         }
-      reviewDao.addLike(id, userId);
+        reviewDao.addLike(id, userId);
     }
 
     public void deleteLike(long id, long userId) {
@@ -104,7 +106,7 @@ public class ReviewService {
     }
 
     public void deleteDislike(long id, long userId) {
-       isExist(id, userId);
+        isExist(id, userId);
         if (!reviewDao.hasAlreadyBeenDisliked(id, userId)) {
             throw new ReviewHasNotBeenRatedException("Отзыву не была поставлена оценка");
         }

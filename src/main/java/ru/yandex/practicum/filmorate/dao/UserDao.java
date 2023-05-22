@@ -24,4 +24,3 @@ public interface UserDao {
 
     List<Long> getFriends(long id);
 }
-
