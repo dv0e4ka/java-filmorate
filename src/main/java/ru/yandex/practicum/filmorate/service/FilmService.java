@@ -44,8 +44,9 @@ public class FilmService {
     }
 
     public void delete(long id) {
-        filmDao.delete(id);
+        //Поменял местами, из-за того, как устроена данная БД.
         genreService.deleteGenre(id);
+        filmDao.delete(id);
     }
 
     public Film getById(long id) {
