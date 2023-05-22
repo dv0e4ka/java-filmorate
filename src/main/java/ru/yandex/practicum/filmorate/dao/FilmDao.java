@@ -25,4 +25,6 @@ public interface FilmDao {
     List<Film> getMostPopularFilm(int count, int genreId, int year);
 
     boolean isContains(long id);
+
+    List<Film> getFilmsByDirector(long directorId, String sortBy);
 }
