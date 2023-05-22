@@ -3,7 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
@@ -45,9 +45,9 @@ public class UserService {
         User friend = userDao.getById(friendId);
 
         if (user == null) {
-            throw new UserNotFoundException("Пользователь с Id '" + userId + "' не найден");
+            throw new EntityNotFoundException("Пользователь с Id '" + userId + "' не найден");
         } else if (friend == null) {
-            throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
+            throw new EntityNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.addFriend(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " теперь друзья!");
@@ -59,9 +59,9 @@ public class UserService {
         User friend = userDao.getById(friendId);
 
         if (user == null) {
-            throw new UserNotFoundException("Пользователь с Id '" + userId + "' не найден");
+            throw new EntityNotFoundException("Пользователь с Id '" + userId + "' не найден");
         } else if (friend == null) {
-            throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
+            throw new EntityNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.deleteFriend(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " больше не друзья!");
@@ -70,7 +70,7 @@ public class UserService {
 
     public List<User> getUserFriends(long id) {
         if (!userDao.isContains(id)) {
-            throw new UserNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
+            throw new EntityNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
         } else {
             List<Long> friendIds = userDao.getFriends(id);
             return friendIds.stream().map(this::getById).collect(Collectors.toList());
@@ -84,7 +84,7 @@ public class UserService {
             userFriends.retainAll(friendFriends);
             return userFriends.stream().map(this::getById).collect(Collectors.toList());
         } else {
-            throw new UserNotFoundException("Пользователь с Id " + id
+            throw new EntityNotFoundException("Пользователь с Id " + id
                     + " или пользователь с Id " + friendId + " не найден в сервисе");
         }
     }

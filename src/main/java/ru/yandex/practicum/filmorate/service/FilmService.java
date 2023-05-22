@@ -3,8 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
 import ru.yandex.practicum.filmorate.dao.UserDao;
@@ -63,10 +62,10 @@ public class FilmService {
 
     public void addLike(long filmId, long userId) {
         if (userDao.getById(userId) == null) {
-            throw new UserNotFoundException("не найден пользователь с id " + userId);
+            throw new EntityNotFoundException("не найден пользователь с id " + userId);
         }
         if (!filmDao.isContains(filmId)) {
-            throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
+            throw new EntityNotFoundException("фильм с id " + filmId + " не найден");
         }
         filmDao.addLike(filmId, userId);
         log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId + "!");
@@ -74,10 +73,10 @@ public class FilmService {
 
     public void deleteLike(long filmId, long userId) {
         if (userDao.getById(userId) == null) {
-            throw new UserNotFoundException("не найден пользователь с id " + userId);
+            throw new EntityNotFoundException("не найден пользователь с id " + userId);
         }
         if (!filmDao.isContains(filmId)) {
-            throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
+            throw new EntityNotFoundException("фильм с id " + filmId + " не найден");
         }
         filmDao.deleteLike(userId, filmId);
         log.info("Пользователь с id " + userId + " удалил лайк фильму с id " + filmId + "!");

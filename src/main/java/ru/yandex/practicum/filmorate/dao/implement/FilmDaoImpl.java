@@ -8,7 +8,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FilmDao;
-import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
@@ -67,7 +67,7 @@ public class FilmDaoImpl implements FilmDao {
                 film.getId()
         );
         if (sqlResult == 0) {
-            throw new FilmNotFoundException("не найден фильм для обновления с id=" + film.getId());
+            throw new EntityNotFoundException("не найден фильм для обновления с id=" + film.getId());
         } else {
             log.info("обновлен фильм с id=" + film.getId());
         }
@@ -78,7 +78,7 @@ public class FilmDaoImpl implements FilmDao {
     public void delete(long id) {
         int sqlResult = jdbcTemplate.update("DELETE FROM FILM WHERE id=?", id);
         if (sqlResult == 0) {
-            throw new FilmNotFoundException("не найден фильм для удаления с id=" + id);
+            throw new EntityNotFoundException("не найден фильм для удаления с id=" + id);
         } else {
             log.info("удален фильм с id=" + id);
         }
@@ -94,7 +94,7 @@ public class FilmDaoImpl implements FilmDao {
         try {
             return jdbcTemplate.queryForObject(sqlFilm, (rs, rowNum) -> makeFilm(rs), id);
         } catch (EmptyResultDataAccessException e) {
-            throw new FilmNotFoundException("не найден фильм с id=" + id);
+            throw new EntityNotFoundException("не найден фильм с id=" + id);
         }
     }
 

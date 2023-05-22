@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.dao.implement;
 
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -9,11 +8,9 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.ReviewDao;
-import ru.yandex.practicum.filmorate.exception.ReviewNotFoundException;
-import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.Review;
 
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -62,7 +59,7 @@ public class ReviewDaoImpl implements ReviewDao {
     public void delete(long id) {
         int sqlResult = jdbcTemplate.update("DELETE FROM reviews WHERE id = ?", id);
         if (sqlResult == 0) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id не найден");
         }
     }
 
@@ -74,7 +71,7 @@ public class ReviewDaoImpl implements ReviewDao {
         try {
             return jdbcTemplate.queryForObject(sqlReview, (rs, rowNum) -> makeReview(rs), id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id не найден");
         }
     }
 

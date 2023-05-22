@@ -9,7 +9,7 @@ import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.jdbc.support.rowset.SqlRowSet;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.UserDao;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.exception.EntityNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.*;
@@ -59,7 +59,7 @@ public class UserDaoImpl implements UserDao {
                 user.getId()
         );
         if (isUpdated == 0) {
-            throw new UserNotFoundException("не найден юзер с id=" + user.getId());
+            throw new EntityNotFoundException("не найден юзер с id=" + user.getId());
         }
         return getById(user.getId());
     }
@@ -68,7 +68,7 @@ public class UserDaoImpl implements UserDao {
     public void delete(long id) {
         int sqlResult = jdbcTemplate.update("DELETE FROM USER_MAN WHERE ID=?", id);
         if (sqlResult == 0) {
-            throw new UserNotFoundException("не найден юзер с id=" + id);
+            throw new EntityNotFoundException("не найден юзер с id=" + id);
         } else {
             log.info("удален пользователь с id=" + id);
         }
@@ -80,7 +80,7 @@ public class UserDaoImpl implements UserDao {
         try {
             return jdbcTemplate.queryForObject(query, (rs, rowNum) -> makeUser(rs), id);
         } catch (EmptyResultDataAccessException e) {
-            throw new UserNotFoundException("не найден юзер с id=" + id);
+            throw new EntityNotFoundException("не найден юзер с id=" + id);
         }
     }
 
