@@ -36,7 +36,7 @@ public class ReviewDaoImpl implements ReviewDao {
             PreparedStatement ps = connection.prepareStatement(reviewSql, keyColumn);
             ps.setString(1, review.getContent());
             ps.setBoolean(2, review.getIsPositive());
-            ps.setLong(3,  review.getUserId());
+            ps.setLong(3, review.getUserId());
             ps.setLong(4, review.getFilmId());
             ps.setLong(5, review.getUseful());
             return ps;
@@ -123,12 +123,12 @@ public class ReviewDaoImpl implements ReviewDao {
     }
 
     private Review makeReview(ResultSet resultSet) throws SQLException {
-       return new Review(resultSet.getInt("id"),
-               resultSet.getString("content"),
-               resultSet.getBoolean("is_positive"),
-               resultSet.getLong("user_id"),
-               resultSet.getLong("film_id"),
-               resultSet.getLong("useful"));
+        return new Review(resultSet.getInt("id"),
+                resultSet.getString("content"),
+                resultSet.getBoolean("is_positive"),
+                resultSet.getLong("user_id"),
+                resultSet.getLong("film_id"),
+                resultSet.getLong("useful"));
     }
 
     @Override
@@ -145,13 +145,12 @@ public class ReviewDaoImpl implements ReviewDao {
                 "FROM review_useful " +
                 "WHERE review_id = ? " +
                 "AND user_id = ?", id, userId);
-       if (rowSet.next()) {
-           boolean liked = rowSet.getBoolean("liked");
-           return liked;
-       }
+        if (rowSet.next()) {
+            boolean liked = rowSet.getBoolean("liked");
+            return liked;
+        }
         return false;
     }
-
 
     @Override
     public boolean hasAlreadyBeenDisliked(long id, long userId) {
