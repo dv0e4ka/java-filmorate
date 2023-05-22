@@ -221,6 +221,43 @@ public class FilmDaoImpl implements FilmDao {
         }
     }
 
+    @Override
+    public List<Film> getFilmsByDirector(long directorId, String sortBy) {
+        List<Film> filmList = new ArrayList<>();
+        if (sortBy.equals("likes")) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "INNER JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "WHERE DF.ID_DIRECTOR = ? " +
+                    "ORDER BY likes_count DESC;";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), directorId);
+        } else if (sortBy.equals("year")) {
+            String sql = "SELECT F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "INNER JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "WHERE DF.ID_DIRECTOR = ? " +
+                    "ORDER BY EXTRACT(YEAR FROM F.RELEASEDATE) ASC;";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), directorId);
+        }
+        return filmList;
+    }
+
     private Film makeFilm(ResultSet resultSet) throws SQLException {
         long id = resultSet.getInt("id");
         Film film = new Film();

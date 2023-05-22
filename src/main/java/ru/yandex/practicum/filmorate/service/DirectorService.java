@@ -50,4 +50,8 @@ public class DirectorService {
     public Director getById(int id) {
         return directorDao.getById(id);
     }
+
+    public boolean isDirectorExists(long id) {
+        return directorDao.isDirectorExists(id);
+    }
 }

@@ -22,4 +22,6 @@ public interface DirectorDao {
     List<Director> getAllDirectorsByFilm(long id);
 
     Director getById(int id);
+
+    boolean isDirectorExists(long id);
 }
