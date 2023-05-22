@@ -113,7 +113,7 @@ public class ReviewService {
 
     private boolean isExist(long id, long userId) {
         if (reviewDao.isContainReview(id)) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new ReviewHasNotBeenRatedException("Отзыв с указанным id не найден");
         }
         if (!userDao.isContains(userId)) {
             throw new UserNotFoundException("Пользователь с указанным id не найден");
