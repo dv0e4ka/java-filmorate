@@ -3,6 +3,7 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.yandex.practicum.filmorate.exception.DirectorNotFoundException;
 import ru.yandex.practicum.filmorate.exception.FilmNotFoundException;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Director;
@@ -105,6 +106,18 @@ public class FilmService {
 
     public List<Film> getPopularFilms(int count, int genreId, int year) {
         List<Film> filmList = filmDao.getMostPopularFilm(count, genreId, year);
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+            film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));
+        }
+        return filmList;
+    }
+
+    public List<Film> getFilmsByDirector(long directorId, String sortBy) {
+        if (!directorService.isDirectorExists(directorId)) {
+            throw new DirectorNotFoundException("не найден режиссер для получения фильмов с id=" + directorId);
+        }
+        List<Film> filmList = filmDao.getFilmsByDirector(directorId, sortBy);
         for (Film film : filmList) {
             film.setGenres(genreService.getALlGenreByFilm(film.getId()));
             film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));

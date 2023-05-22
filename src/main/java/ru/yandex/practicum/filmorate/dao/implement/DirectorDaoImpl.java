@@ -130,6 +130,15 @@ public class DirectorDaoImpl implements DirectorDao {
         }
     }
 
+    public boolean isDirectorExists(long id) {
+        String sqlQuery = "SELECT id " +
+                "FROM director WHERE id = ?;";
+        boolean exists = jdbcTemplate.query(sqlQuery, new Object[]{id}, (ResultSet rs) -> {
+            return rs.next();
+        });
+        return exists;
+    }
+
     private Director makeDirector(ResultSet rs) throws SQLException {
         Director director = new Director();
         director.setId(rs.getInt("ID"));
