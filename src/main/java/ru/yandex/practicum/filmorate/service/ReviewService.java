@@ -30,27 +30,26 @@ public class ReviewService {
 
     public Review add(Review review) {
         if ((review.getUserId() == null) || (review.getFilmId() == null)) {
-            throw new ValidationException("Указанный id не должен быть пустым");
+            throw new ValidationException("Поле 'id' не должно быть пустым.");
         }
-
         if (!userDao.isContains(review.getUserId())) {
-            throw new EntityNotFoundException("Пользователь с указанным id не найден");
+            throw new EntityNotFoundException("Пользователь с указанным id = " + review.getUserId() + " не найден.");
         }
         if (!filmDao.isContains(review.getFilmId())) {
-            throw new EntityNotFoundException("Фильм с указанным id не найден");
+            throw new EntityNotFoundException("Фильм с указанным id = " + review.getFilmId() + " не найден.");
         }
         if (review.getIsPositive() == null) {
-            throw new ValidationException("Поле 'isPositive' не должно быть пустым");
+            throw new ValidationException("Поле 'isPositive' не должно быть пустым.");
         }
-        log.info("Добавлен отзыв к фильму {}", review.getFilmId());
+        log.info("Добавлен отзыв к фильму с id = {}", review.getFilmId());
         return reviewDao.add(review);
     }
 
     public Review update(Review review) {
         if (reviewDao.isContainReview(review.getReviewId())) {
-            throw new EntityNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id = " + review.getReviewId() + " не найден");
         }
-        log.info("Обновлена информация о фильме в отзыве с id {}", review.getReviewId());
+        log.info("Обновлена информация о фильме в отзыве с id = {}", review.getReviewId());
         return reviewDao.update(review);
     }
 
@@ -60,17 +59,17 @@ public class ReviewService {
 
     public Review getById(long id) {
         if (reviewDao.isContainReview(id)) {
-            throw new EntityNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id = " + id + " не найден.");
         }
         return reviewDao.getById(id);
     }
 
     public List<Review> getAllReviews(long filmId, int count) {
         if ((filmId != 0) && (!(filmDao.isContains(filmId)))) {
-            throw new EntityNotFoundException("Фильм с указанным id не найден");
+            throw new EntityNotFoundException("Фильм с указанным id = " + filmId + " не найден.");
         }
         if (count <= 0) {
-            throw new ValidationException("count. Значение параметра запроса не должно быть меньше 1");
+            throw new ValidationException("count. Значение параметра запроса не должно быть меньше 1.");
         }
         return reviewDao.getAllReviews(filmId, count);
     }
@@ -78,7 +77,7 @@ public class ReviewService {
     public void addLike(long id, long userId) {
         isExist(id, userId);
         if (reviewDao.hasAlreadyBeenLiked(id, userId)) {
-            throw new ReviewHasAlreadyBeenRatedException("Отзыву уже была поставлена оценка");
+            throw new ReviewHasAlreadyBeenRatedException("Отзыву с id = " + id + " уже была поставлена оценка.");
         }
         if (reviewDao.hasAlreadyBeenDisliked(id, userId)) {
             deleteDislike(id, userId);
@@ -89,7 +88,7 @@ public class ReviewService {
     public void deleteLike(long id, long userId) {
         isExist(id, userId);
         if (!reviewDao.hasAlreadyBeenLiked(id, userId)) {
-            throw new ReviewHasNotBeenRatedException("Отзыву не была поставлена оценка");
+            throw new ReviewHasNotBeenRatedException("Отзыву  с id = " + id + " не была поставлена оценка.");
         }
         reviewDao.deleteLike(id, userId);
     }
@@ -97,7 +96,7 @@ public class ReviewService {
     public void addDislike(long id, long userId) {
         isExist(id, userId);
         if (reviewDao.hasAlreadyBeenDisliked(id, userId)) {
-            throw new ReviewHasAlreadyBeenRatedException("Отзыву уже была поставлена оценка");
+            throw new ReviewHasAlreadyBeenRatedException("Отзыву  с id = " + id + " уже была поставлена оценка.");
         }
         if (reviewDao.hasAlreadyBeenLiked(id, userId)) {
             deleteLike(id, userId);
@@ -108,17 +107,17 @@ public class ReviewService {
     public void deleteDislike(long id, long userId) {
         isExist(id, userId);
         if (!reviewDao.hasAlreadyBeenDisliked(id, userId)) {
-            throw new ReviewHasNotBeenRatedException("Отзыву не была поставлена оценка");
+            throw new ReviewHasNotBeenRatedException("Отзыву  с id = " + id + " не была поставлена оценка.");
         }
         reviewDao.deleteDislike(id, userId);
     }
 
     private boolean isExist(long id, long userId) {
         if (reviewDao.isContainReview(id)) {
-            throw new EntityNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id = " + id + " не найден.");
         }
         if (!userDao.isContains(userId)) {
-            throw new EntityNotFoundException("Пользователь с указанным id не найден");
+            throw new EntityNotFoundException("Пользователь с указанным id = " + userId + " не найден.");
         }
         return true;
     }

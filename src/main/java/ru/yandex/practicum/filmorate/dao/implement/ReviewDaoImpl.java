@@ -1,5 +1,6 @@
 package ru.yandex.practicum.filmorate.dao.implement;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -18,6 +19,7 @@ import java.util.List;
 import java.util.Objects;
 
 @Repository
+@Slf4j
 public class ReviewDaoImpl implements ReviewDao {
     private final JdbcTemplate jdbcTemplate;
 
@@ -59,8 +61,9 @@ public class ReviewDaoImpl implements ReviewDao {
     public void delete(long id) {
         int sqlResult = jdbcTemplate.update("DELETE FROM reviews WHERE id = ?", id);
         if (sqlResult == 0) {
-            throw new EntityNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id = " + id + " не найден.");
         }
+        log.info("Отзыв с id = {} удалён", id);
     }
 
     @Override
@@ -71,7 +74,7 @@ public class ReviewDaoImpl implements ReviewDao {
         try {
             return jdbcTemplate.queryForObject(sqlReview, (rs, rowNum) -> makeReview(rs), id);
         } catch (EmptyResultDataAccessException e) {
-            throw new EntityNotFoundException("Отзыв с указанным id не найден");
+            throw new EntityNotFoundException("Отзыв с указанным id = " + id + " не найден.");
         }
     }
 
@@ -93,6 +96,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
         jdbcTemplate.update("UPDATE reviews SET useful = useful + 1 " +
                 "WHERE id = ?", id);
+        log.info("Пользователем с id = {} поставлен лайк к отзыву с id = {}", userId, id);
     }
 
     @Override
@@ -102,6 +106,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 "AND user_id = ?", id, userId);
         jdbcTemplate.update("UPDATE reviews SET useful = useful - 1 " +
                 "WHERE id = ?", id);
+        log.info("Лайк к отзыву с id = {} удалён", id);
     }
 
     @Override
@@ -111,6 +116,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
         jdbcTemplate.update("UPDATE reviews SET useful = useful - 1 " +
                 "WHERE id = ?", id);
+        log.info("Пользователем с id = {} поставлен дизлайк к отзыву с id = {}", userId, id);
     }
 
     @Override
@@ -120,6 +126,7 @@ public class ReviewDaoImpl implements ReviewDao {
                 "AND user_id = ?", id, userId);
         jdbcTemplate.update("UPDATE reviews SET useful = useful + 1 " +
                 "WHERE id = ?", id);
+        log.info("Дизлайк к отзыву с id = {} удалён", id);
     }
 
     private Review makeReview(ResultSet resultSet) throws SQLException {
