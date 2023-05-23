@@ -77,7 +77,7 @@ public class FilmController {
 
     @GetMapping("/director/{directorId}")
     public List getFilmsByDirector(@PathVariable long directorId,
-                            @RequestParam(name = "sortBy") @Pattern(regexp = "year|likes") String sortBy) {
+                                   @RequestParam(name = "sortBy") @Pattern(regexp = "year|likes") String sortBy) {
         log.info("получен запрос на получение фильмов режиссера с id " + directorId);
         return filmService.getFilmsByDirector(directorId, sortBy);
     }
