@@ -61,7 +61,7 @@ public class ReviewDaoImpl implements ReviewDao {
     public void delete(long id) {
         int sqlResult = jdbcTemplate.update("DELETE FROM reviews WHERE id = ?", id);
         if (sqlResult == 0) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new ReviewNotFoundException("Отзыв с указанным id = " + id + " не найден.");
         }
         log.info("Отзыв с id = {} удалён", id);
     }
@@ -74,7 +74,7 @@ public class ReviewDaoImpl implements ReviewDao {
         try {
             return jdbcTemplate.queryForObject(sqlReview, (rs, rowNum) -> makeReview(rs), id);
         } catch (EmptyResultDataAccessException e) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new ReviewNotFoundException("Отзыв с указанным id " + id + " не найден.");
         }
     }
 
@@ -96,7 +96,7 @@ public class ReviewDaoImpl implements ReviewDao {
 
         jdbcTemplate.update("UPDATE reviews SET useful = useful + 1 " +
                 "WHERE id = ?", id);
-        log.info("Пользователем с id = {} поставлен лайк к отзыву с id = {}", userId, id);
+        log.info("Пользователем с id = {} поставлен лайк отзыву с id = {}", userId, id);
     }
 
     @Override

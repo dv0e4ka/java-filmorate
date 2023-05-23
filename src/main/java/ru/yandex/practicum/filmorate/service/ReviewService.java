@@ -30,10 +30,10 @@ public class ReviewService {
             throw new ValidationException("Поле 'id' не должно быть пустым.");
         }
         if (!userDao.isContains(review.getUserId())) {
-            throw new UserNotFoundException("Пользователь с указанным id не найден");
+            throw new UserNotFoundException("Пользователь с id = " + review.getUserId() + " не найден.");
         }
         if (!filmDao.isContains(review.getFilmId())) {
-            throw new FilmNotFoundException("Фильм с указанным id не найден");
+            throw new FilmNotFoundException("Фильм с id = " + review.getFilmId() + " не найден.");
         }
         if (review.getIsPositive() == null) {
             throw new ValidationException("Поле 'isPositive' не должно быть пустым.");
@@ -44,7 +44,7 @@ public class ReviewService {
 
     public Review update(Review review) {
         if (reviewDao.isContainReview(review.getReviewId())) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new ReviewNotFoundException("Отзыв с id = " + review.getReviewId() + " не найден.");
         }
         log.info("Обновлена информация о фильме в отзыве с id = {}", review.getReviewId());
         return reviewDao.update(review);
@@ -56,14 +56,14 @@ public class ReviewService {
 
     public Review getById(long id) {
         if (reviewDao.isContainReview(id)) {
-            throw new ReviewNotFoundException("Отзыв с указанным id не найден");
+            throw new ReviewNotFoundException("Отзыв с id = " + id + " не найден.");
         }
         return reviewDao.getById(id);
     }
 
     public List<Review> getAllReviews(long filmId, int count) {
         if ((filmId != 0) && (!(filmDao.isContains(filmId)))) {
-            throw new FilmNotFoundException("Фильм с указанным id не найден");
+            throw new FilmNotFoundException("Фильм с id = " + filmId + " не найден.");
         }
         if (count <= 0) {
             throw new ValidationException("count. Значение параметра запроса не должно быть меньше 1.");
@@ -85,7 +85,7 @@ public class ReviewService {
     public void deleteLike(long id, long userId) {
         isExist(id, userId);
         if (!reviewDao.hasAlreadyBeenLiked(id, userId)) {
-            throw new ReviewHasNotBeenRatedException("Отзыву  с id = " + id + " не была поставлена оценка.");
+            throw new ReviewHasNotBeenRatedException("Отзыву с id = " + id + " не была поставлена оценка.");
         }
         reviewDao.deleteLike(id, userId);
     }
@@ -93,7 +93,7 @@ public class ReviewService {
     public void addDislike(long id, long userId) {
         isExist(id, userId);
         if (reviewDao.hasAlreadyBeenDisliked(id, userId)) {
-            throw new ReviewHasAlreadyBeenRatedException("Отзыву  с id = " + id + " уже была поставлена оценка.");
+            throw new ReviewHasAlreadyBeenRatedException("Отзыву с id = " + id + " уже была поставлена оценка.");
         }
         if (reviewDao.hasAlreadyBeenLiked(id, userId)) {
             deleteLike(id, userId);
@@ -104,17 +104,17 @@ public class ReviewService {
     public void deleteDislike(long id, long userId) {
         isExist(id, userId);
         if (!reviewDao.hasAlreadyBeenDisliked(id, userId)) {
-            throw new ReviewHasNotBeenRatedException("Отзыву  с id = " + id + " не была поставлена оценка.");
+            throw new ReviewHasNotBeenRatedException("Отзыву с id = " + id + " не была поставлена оценка.");
         }
         reviewDao.deleteDislike(id, userId);
     }
 
     private boolean isExist(long id, long userId) {
         if (reviewDao.isContainReview(id)) {
-            throw new ReviewHasNotBeenRatedException("Отзыв с указанным id не найден");
+            throw new ReviewHasNotBeenRatedException("Отзыв с id = " + id + " не найден.");
         }
         if (!userDao.isContains(userId)) {
-            throw new UserNotFoundException("Пользователь с указанным id не найден");
+            throw new UserNotFoundException("Пользователь с id = " + userId + " не найден.");
         }
         return true;
     }
