@@ -66,7 +66,7 @@ public class ReviewService {
             throw new FilmNotFoundException("Фильм с id = " + filmId + " не найден.");
         }
         if (count <= 0) {
-            throw new ValidationException("count. Значение параметра запроса не должно быть меньше 1.");
+            throw new IncorrectParameterException("count. Значение параметра запроса не должно быть меньше 1.");
         }
         return reviewDao.getAllReviews(filmId, count);
     }
