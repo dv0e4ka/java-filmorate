@@ -200,7 +200,7 @@ public class FilmDaoImpl implements FilmDao {
                     "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
                     "LEFT JOIN GENRE_FILM GF on F.ID = GF.ID_FILM " +
                     "INNER JOIN RATING_MPA RM on F.MPA = RM.ID " +
-                    "WHERE EXTRACT(YEAR FROM F.RELEASEDATE) = ? AND GF.ID_GENRE = ?" +
+                    "WHERE EXTRACT(YEAR FROM F.RELEASEDATE) = ? AND GF.ID_GENRE = ? " +
                     "ORDER BY F.ID , likes_count DESC " +
                     "LIMIT ?";
             filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), year, genreId, count);
