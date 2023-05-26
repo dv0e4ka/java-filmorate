@@ -116,7 +116,7 @@ public class FilmDaoImpl implements FilmDao {
                 "LEFT JOIN LIKES L1 on F.ID = L.ID_FILM " +
                 "JOIN RATING_MPA RM ON F.MPA = RM.ID " +
                 "WHERE L.ID_USER = ? AND L1.ID_USER = ? " +
-                "ORDER BY likes_count, F.ID ";
+                "ORDER BY likes_count, F.ID";
         List<Film> filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), userId, friendId);
         return new HashSet<>(filmList);
     }
