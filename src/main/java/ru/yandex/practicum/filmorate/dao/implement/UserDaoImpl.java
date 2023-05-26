@@ -33,9 +33,6 @@ public class UserDaoImpl implements UserDao {
 
     @Override
     public User add(User user) {
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
         KeyHolder keyHolder = new GeneratedKeyHolder();
         String sql = "INSERT INTO USER_MAN(NAME, LOGIN, EMAIL, BIRTHDAY) VALUES(?, ?, ?, ?)";
         jdbcTemplate.update(connection -> {
