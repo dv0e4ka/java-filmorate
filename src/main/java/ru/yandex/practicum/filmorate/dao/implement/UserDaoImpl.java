@@ -13,8 +13,9 @@ import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
 
 import java.sql.*;
-import java.util.List;
-import java.util.Objects;
+import java.sql.Date;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Repository
 @Slf4j
@@ -142,5 +143,42 @@ public class UserDaoImpl implements UserDao {
         Date date = resultSet.getDate("birthday");
         user.setBirthday(date.toLocalDate());
         return user;
+    }
+
+    @Override
+    public List<Long> getRecommendations(long id) {
+        String sql = "SELECT id_film, id_user FROM likes";
+        Map<Long, Set<Long>> allUsersLikes = jdbcTemplate.query(sql, rs -> {
+            Map<Long, Set<Long>> likesMap = new HashMap<>();
+            while (rs.next()) {
+                Long userId = rs.getLong("id_user");
+                Long filmId = rs.getLong("id_film");
+
+                Set<Long> filmIds = likesMap.getOrDefault(userId, new HashSet<>());
+                filmIds.add(filmId);
+                likesMap.put(userId, filmIds);
+            }
+            return likesMap;
+        });
+
+        if (allUsersLikes == null || allUsersLikes.isEmpty()) return new ArrayList<>();
+
+        Set<Long> userLike = allUsersLikes.getOrDefault(id, new HashSet<>());
+        allUsersLikes.remove(id);
+
+        long maxCommonCount = 0;
+        long userMaxMatch = -1L;
+        for (Map.Entry<Long, Set<Long>> entry : allUsersLikes.entrySet()) {
+            long matches = entry.getValue().stream().filter(userLike::contains).count();
+            if (matches > maxCommonCount) {
+                maxCommonCount = matches;
+                userMaxMatch = entry.getKey();
+            }
+            if (maxCommonCount == 0) return Collections.emptyList();
+        }
+
+        return allUsersLikes.getOrDefault(userMaxMatch, new HashSet<>()).stream()
+                .filter(film -> !userLike.contains(film))
+                .collect(Collectors.toList());
     }
 }
