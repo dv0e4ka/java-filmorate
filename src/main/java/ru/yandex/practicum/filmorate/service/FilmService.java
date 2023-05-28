@@ -133,4 +133,13 @@ public class FilmService {
         }
         return filmList;
     }
+
+    public List<Film> searchFilms(String query, List<String> by) {
+        List<Film> filmList = filmDao.searchFilms(query, by);
+        for (Film film : filmList) {
+            film.setGenres(genreService.getALlGenreByFilm(film.getId()));
+            film.setDirectors(directorService.getAllDirectorsByFilm(film.getId()));
+        }
+        return filmList;
+    }
 }
