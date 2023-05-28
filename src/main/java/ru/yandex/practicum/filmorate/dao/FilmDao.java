@@ -27,4 +27,6 @@ public interface FilmDao {
     boolean isContains(long id);
 
     List<Film> getFilmsByDirector(long directorId, String sortBy);
+
+    List<Film> searchFilms(String query, List<String> by);
 }

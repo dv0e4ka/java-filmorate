@@ -258,6 +258,78 @@ public class FilmDaoImpl implements FilmDao {
         return filmList;
     }
 
+    @Override
+    public List<Film> searchFilms(String query, List<String> by) {
+        String finalQuery = "%" + query + "%";
+        List<Film> filmList = new ArrayList<>();
+        if (by.contains("title") && by.contains("director")) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "WHERE F.NAME ILIKE ? " +
+                    "UNION " +
+                    "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "LEFT JOIN DIRECTOR D on DF.ID_DIRECTOR = D.ID " +
+                    "WHERE D.NAME ILIKE ? " +
+                    "ORDER BY likes_count DESC;";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery, finalQuery);
+        } else if (by.contains("title")) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "WHERE F.NAME ILIKE ? " +
+                    "ORDER BY likes_count DESC;";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery);
+        } else if (by.contains("director")) {
+            String sql = "SELECT L.ID_FILM as likes_count, " +
+                    "F.ID, " +
+                    "F.NAME, " +
+                    "F.DESCRIPTION, " +
+                    "F.RELEASEDATE, " +
+                    "F.DURATION, " +
+                    "F.MPA, " +
+                    "RM.NAME AS MPA_NAME " +
+                    "FROM FILM AS F " +
+                    "LEFT JOIN LIKES L on F.ID = L.ID_FILM " +
+                    "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
+                    "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
+                    "LEFT JOIN DIRECTOR D on DF.ID_DIRECTOR = D.ID " +
+                    "WHERE D.NAME ILIKE ? " +
+                    "ORDER BY likes_count DESC;";
+            filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery);
+        }
+        return filmList;
+    }
+
     private Film makeFilm(ResultSet resultSet) throws SQLException {
         long id = resultSet.getInt("id");
         Film film = new Film();
