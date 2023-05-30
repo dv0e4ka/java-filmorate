@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
+import ru.yandex.practicum.filmorate.model.Event;
 
 import java.util.List;
 
@@ -24,7 +25,7 @@ public class FeedDaoImpl implements FeedDao {
     }
 
     @Override
-    public List getFeed(int id) {
+    public List<Event> getFeed(long id) {
         return null;
     }
 }
