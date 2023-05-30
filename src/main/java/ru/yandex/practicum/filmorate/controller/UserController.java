@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.FeedService;
 import ru.yandex.practicum.filmorate.service.UserService;
 
 import javax.validation.Valid;
@@ -15,6 +16,7 @@ import java.util.List;
 @Slf4j
 public class UserController {
     private final UserService userService;
+    private final FeedService feedService;
 
     @PostMapping
     public User add(@Valid @RequestBody User user) {
@@ -73,7 +75,6 @@ public class UserController {
     @GetMapping("/{id}/feed")
     public List getFeed(@PathVariable long id) {
         log.info("получен запрос на получение ленты событий пользователя с id {}", id);
-        return null;
-        //return feedService.getFeed(id);
+        return feedService.getFeed(id);
     }
 }
