@@ -23,5 +23,7 @@ public class Event {
     @NotNull
     int entityId;
     @NotBlank
-    private String eventType;
+    private EventType eventType;
+    @NotBlank
+    private OperationType operationType;
 }
