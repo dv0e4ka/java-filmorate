@@ -69,4 +69,11 @@ public class UserController {
         log.info("получен запрос на получение общего списка друзей id {} и {}", id, otherId);
         return userService.getCommonFriends(id, otherId);
     }
+
+    @GetMapping("/{id}/feed")
+    public List getFeed(@PathVariable long id) {
+        log.info("получен запрос на получение ленты событий пользователя с id {}", id);
+        return null;
+        //return feedService.getFeed(id);
+    }
 }
