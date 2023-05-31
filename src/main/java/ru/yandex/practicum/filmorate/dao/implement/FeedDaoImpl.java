@@ -44,14 +44,12 @@ public class FeedDaoImpl implements FeedDao {
         }, keyHolder);
 
         long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
-        //return getEvent(id);
     }
 
     @Override
     public Event getEvent(long eventId) {
         String sql = "SELECT * FROM feed WHERE id = ?";
         Event event = jdbcTemplate.queryForObject(sql, (rs, rowNum) -> makeFeed(rs), eventId);
-        //Можно сделать в одну строчку, но, на будущее решил оставить так
         return event;
     }
 
@@ -59,7 +57,6 @@ public class FeedDaoImpl implements FeedDao {
     public List<Event> getEvents(long userId) {
         String sql = "SELECT * FROM feed WHERE user_id = ?";
         List<Event> eventList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFeed(rs), userId);
-        //Можно сделать в одну строчку, но, на будущее решил оставить так
         return eventList;
     }
 

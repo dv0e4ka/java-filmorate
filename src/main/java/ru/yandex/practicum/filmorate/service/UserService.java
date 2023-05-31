@@ -101,7 +101,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
         }
         List<Long> ids = userDao.getRecommendations(id);
-        List<Film> films = ids.stream().map(filmId -> filmService.getById(filmId)).collect(Collectors.toList());
+        List<Film> films = ids.stream().map(filmService::getById).collect(Collectors.toList());
         return films;
     }
 }
