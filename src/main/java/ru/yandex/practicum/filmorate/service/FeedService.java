@@ -7,6 +7,7 @@ import ru.yandex.practicum.filmorate.dao.FeedDao;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.OperationType;
+import ru.yandex.practicum.filmorate.model.Review;
 
 import java.time.Instant;
 import java.util.List;
@@ -37,7 +38,7 @@ public class FeedService {
         Event event = Event.builder().
                 userId(userId).
                 eventType(EventType.FRIEND).
-                operationType(OperationType.ADD).
+                operation(OperationType.ADD).
                 entityId(friendId).
                 timestamp(Instant.now().toEpochMilli()).
                 build();
@@ -48,7 +49,7 @@ public class FeedService {
         Event event = Event.builder().
                 userId(userId).
                 eventType(EventType.FRIEND).
-                operationType(OperationType.REMOVE).
+                operation(OperationType.REMOVE).
                 entityId(friendId).
                 timestamp(Instant.now().toEpochMilli()).
                 build();
@@ -59,7 +60,7 @@ public class FeedService {
         Event event = Event.builder().
                 userId(userId).
                 eventType(EventType.LIKE).
-                operationType(OperationType.ADD).
+                operation(OperationType.ADD).
                 entityId(filmId).
                 timestamp(Instant.now().toEpochMilli()).
                 build();
@@ -70,8 +71,41 @@ public class FeedService {
         Event event = Event.builder().
                 userId(userId).
                 eventType(EventType.LIKE).
-                operationType(OperationType.REMOVE).
+                operation(OperationType.REMOVE).
                 entityId(filmId).
+                timestamp(Instant.now().toEpochMilli()).
+                build();
+        feedDao.addEvent(event);
+    }
+
+    public void addReviewEvent(Review review) {
+        Event event = Event.builder().
+                userId(review.getUserId()).
+                eventType(EventType.REVIEW).
+                operation(OperationType.ADD).
+                entityId(review.getReviewId()).
+                timestamp(Instant.now().toEpochMilli()).
+                build();
+        feedDao.addEvent(event);
+    }
+
+    public void deleteReviewEvent(Review review) {
+        Event event = Event.builder().
+                userId(review.getUserId()).
+                eventType(EventType.REVIEW).
+                operation(OperationType.REMOVE).
+                entityId(review.getReviewId()).
+                timestamp(Instant.now().toEpochMilli()).
+                build();
+        feedDao.addEvent(event);
+    }
+
+    public void updateReviewEvent(Review review) {
+        Event event = Event.builder().
+                userId(review.getUserId()).
+                eventType(EventType.REVIEW).
+                operation(OperationType.UPDATE).
+                entityId(review.getReviewId()).
                 timestamp(Instant.now().toEpochMilli()).
                 build();
         feedDao.addEvent(event);

@@ -18,7 +18,7 @@ public class Event {
     @NotBlank
     private EventType eventType;
     @NotBlank
-    private OperationType operationType;
+    private OperationType operation;
 
     @NotNull
     long entityId;
