@@ -13,11 +13,13 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-    private UserDao userDao;
+    private final UserDao userDao;
+    private final FeedService feedService;
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, FeedService feedService) {
         this.userDao = userDao;
+        this.feedService = feedService;
     }
 
     public User add(User user) {
@@ -50,6 +52,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.addFriend(userId, friendId);
+            feedService.addFriendEvent(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " теперь друзья!");
         }
     }
@@ -64,6 +67,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.deleteFriend(userId, friendId);
+            feedService.deleteFriendEvent(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " больше не друзья!");
         }
     }
