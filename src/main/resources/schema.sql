@@ -1,5 +1,3 @@
---DROP TABLE FEED;
-
 CREATE TABLE IF NOT EXISTS genre_types (
     id integer,
     name varchar(255) NOT NULL,
