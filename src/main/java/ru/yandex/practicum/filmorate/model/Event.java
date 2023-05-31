@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
@@ -13,17 +10,20 @@ import javax.validation.constraints.NotNull;
 @AllArgsConstructor
 @NoArgsConstructor
 public class Event {
-    @NotBlank
-    private String name;
+    private long eventId;               //Главный ключ
+
     @NotNull
-    private long eventId;
-    private Long timestamp;            //Храню числом из-за тестов
-    @NotNull
-    int userId;
-    @NotNull
-    int entityId;
+    long userId;
+
     @NotBlank
     private EventType eventType;
     @NotBlank
     private OperationType operationType;
+
+    @NotNull
+    long entityId;
+
+    @NotNull
+    private Long timestamp;             //Храню числом из-за тестов
+
 }
