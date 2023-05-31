@@ -3,9 +3,10 @@ package ru.yandex.practicum.filmorate.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.yandex.practicum.filmorate.dao.UserDao;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.dao.UserDao;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,12 +16,13 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserDao userDao;
     private final FeedService feedService;
+    private FilmService filmService;
 
     @Autowired
-    public UserService(UserDao userDao, FeedService feedService) {
+    public UserService(UserDao userDao, FeedService feedService, FilmService filmService) {
         this.userDao = userDao;
         this.feedService = feedService;
-    }
+        this.filmService = filmService;
 
     public User add(User user) {
         return userDao.add(user);
@@ -91,5 +93,14 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id " + id
                     + " или пользователь с Id " + friendId + " не найден в сервисе");
         }
+    }
+
+    public List<Film> getRecommendations(long id) {
+        if (!userDao.isContains(id)) {
+            throw new UserNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
+        }
+        List<Long> ids = userDao.getRecommendations(id);
+        List<Film> films = ids.stream().map(filmId -> filmService.getById(filmId)).collect(Collectors.toList());
+        return films;
     }
 }

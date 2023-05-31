@@ -37,7 +37,7 @@ public class FilmController {
     }
 
     @GetMapping
-    public List getAllFilms() {
+    public List<Film> getAllFilms() {
         log.info("поступил запрос получение всех фильмов");
         return filmService.getAllFilms();
     }
@@ -49,7 +49,7 @@ public class FilmController {
     }
 
     @GetMapping("/common")
-    public Set getCommonFilms(@RequestParam(name = "userId") long userId,
+    public Set<Film> getCommonFilms(@RequestParam(name = "userId") long userId,
                               @RequestParam(name = "friendId") long friendId) {
         log.info("поступил запрос на получение общих фильмов между пользователями с id " + userId + " и " + friendId);
         return filmService.getCommonFilms(userId, friendId);
@@ -68,7 +68,7 @@ public class FilmController {
     }
 
     @GetMapping("/popular")
-    List getPopularFilms(@RequestParam(defaultValue = "10", required = false, name = "count") int count,
+    public List<Film> getPopularFilms(@RequestParam(defaultValue = "10", required = false, name = "count") int count,
                          @RequestParam(defaultValue = "0", required = false, name = "genreId") int genreId,
                          @RequestParam(defaultValue = "0", required = false, name = "year") int year) {
         log.info("получен запрос на получение " + count + " наиболее популярных фильмов");
@@ -76,9 +76,16 @@ public class FilmController {
     }
 
     @GetMapping("/director/{directorId}")
-    public List getFilmsByDirector(@PathVariable long directorId,
+    public List<Film> getFilmsByDirector(@PathVariable long directorId,
                                    @RequestParam(name = "sortBy") @Pattern(regexp = "year|likes") String sortBy) {
         log.info("получен запрос на получение фильмов режиссера с id " + directorId);
         return filmService.getFilmsByDirector(directorId, sortBy);
+    }
+
+    @GetMapping("/search")
+    public List<Film> searchFilms(@RequestParam(name = "query") String query,
+                                   @RequestParam(name = "by") @Pattern(regexp = "director|title") List<String> by) {
+        log.info("получен запрос на поиск фильмов по " + by + " запрос: " + query);
+        return filmService.searchFilms(query, by);
     }
 }
