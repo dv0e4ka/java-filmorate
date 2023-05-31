@@ -14,15 +14,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-    private FilmService filmService;
     private final UserDao userDao;
     private final FeedService feedService;
+    private final FilmService filmService;
 
     @Autowired
-    public UserService(UserDao userDao, FilmService filmService, FeedService feedService) {
+    public UserService(UserDao userDao, FeedService feedService, FilmService filmService) {
         this.userDao = userDao;
-        this.filmService = filmService;
         this.feedService = feedService;
+        this.filmService = filmService;
     }
 
     public User add(User user) {

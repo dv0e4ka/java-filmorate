@@ -1,6 +1,5 @@
 package ru.yandex.practicum.filmorate.controller;
 
-
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
@@ -74,15 +73,15 @@ public class UserController {
         return userService.getCommonFriends(id, otherId);
     }
 
-    @GetMapping("/{id}/recommendations")
-    public List<Film> getRecommendations(@PathVariable long id) {
-        log.info("получен запрос на получение рекомендаций пользователю id={}", id);
-        return userService.getRecommendations(id);
-    }
-
     @GetMapping("/{id}/feed")
     public List getFeed(@PathVariable long id) {
         log.info("получен запрос на получение ленты событий пользователя с id {}", id);
         return feedService.getFeed(id);
+    }
+
+    @GetMapping("/{id}/recommendations")
+    public List<Film> getRecommendations(@PathVariable long id) {
+        log.info("получен запрос на получение рекомендаций пользователю id={}", id);
+        return userService.getRecommendations(id);
     }
 }
