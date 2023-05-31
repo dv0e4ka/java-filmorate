@@ -16,13 +16,14 @@ import java.util.stream.Collectors;
 public class UserService {
     private final UserDao userDao;
     private final FeedService feedService;
-    private FilmService filmService;
+    private final FilmService filmService;
 
     @Autowired
     public UserService(UserDao userDao, FeedService feedService, FilmService filmService) {
         this.userDao = userDao;
         this.feedService = feedService;
         this.filmService = filmService;
+    }
 
     public User add(User user) {
         return userDao.add(user);
