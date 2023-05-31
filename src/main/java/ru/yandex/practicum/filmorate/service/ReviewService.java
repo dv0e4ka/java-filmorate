@@ -41,8 +41,9 @@ public class ReviewService {
             throw new ValidationException("Поле 'isPositive' не должно быть пустым.");
         }
         log.info("Добавлен отзыв к фильму с id = {}", review.getFilmId());
-        feedService.addReviewEvent(review);
-        return reviewDao.add(review);
+        Review result = reviewDao.add(review);
+        feedService.addReviewEvent(result);
+        return result;
     }
 
     public Review update(Review review) {
@@ -50,8 +51,9 @@ public class ReviewService {
             throw new ReviewNotFoundException("Отзыв с id = " + review.getReviewId() + " не найден.");
         }
         log.info("Обновлена информация о фильме в отзыве с id = {}", review.getReviewId());
-        feedService.updateReviewEvent(review);
-        return reviewDao.update(review);
+        Review result = reviewDao.update(review);
+        feedService.updateReviewEvent(result);
+        return result;
     }
 
     public void delete(long id) {
