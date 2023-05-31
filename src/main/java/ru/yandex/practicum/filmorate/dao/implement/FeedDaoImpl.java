@@ -7,8 +7,6 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
-import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
-import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.OperationType;
@@ -39,7 +37,7 @@ public class FeedDaoImpl implements FeedDao {
             PreparedStatement ps = connection.prepareStatement(eventSql, keyColumn);
             ps.setInt(1, (int) event.getUserId());
             ps.setString(2, event.getEventType().toString());
-            ps.setString(3, event.getOperationType().toString());
+            ps.setString(3, event.getOperation().toString());
             ps.setInt(4, (int) event.getEntityId());
             ps.setLong(5, event.getTimestamp());
             return ps;
@@ -83,7 +81,7 @@ public class FeedDaoImpl implements FeedDao {
         event.setEventId(resultSet.getInt("id"));
         event.setUserId(resultSet.getInt("user_id"));
         event.setEventType(EventType.valueOf(resultSet.getString("event_type")));
-        event.setOperationType(OperationType.valueOf(resultSet.getString("operation_type")));
+        event.setOperation(OperationType.valueOf(resultSet.getString("operation_type")));
         event.setEntityId(resultSet.getInt("entity_id"));
         event.setTimestamp(resultSet.getLong("timestamp"));
         return event;
