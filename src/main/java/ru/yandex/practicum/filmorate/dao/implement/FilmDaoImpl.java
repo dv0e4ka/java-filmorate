@@ -263,7 +263,7 @@ public class FilmDaoImpl implements FilmDao {
         String finalQuery = "%" + query + "%";
         List<Film> filmList = new ArrayList<>();
         if (by.contains("title") && by.contains("director")) {
-            String sql = "SELECT L.ID_FILM as likes_count, " +
+            String sql = "SELECT (SELECT COUNT(ID_FILM) FROM LIKES WHERE ID_FILM = F.ID) as likes_count, " +
                     "F.ID, " +
                     "F.NAME, " +
                     "F.DESCRIPTION, " +
@@ -276,8 +276,9 @@ public class FilmDaoImpl implements FilmDao {
                     "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
                     "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
                     "WHERE F.NAME ILIKE ? " +
+                    "GROUP BY F.ID " +
                     "UNION " +
-                    "SELECT L.ID_FILM as likes_count, " +
+                    "SELECT (SELECT COUNT(ID_FILM) FROM LIKES WHERE ID_FILM = F.ID) as likes_count, " +
                     "F.ID, " +
                     "F.NAME, " +
                     "F.DESCRIPTION, " +
@@ -291,10 +292,11 @@ public class FilmDaoImpl implements FilmDao {
                     "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
                     "LEFT JOIN DIRECTOR D on DF.ID_DIRECTOR = D.ID " +
                     "WHERE D.NAME ILIKE ? " +
+                    "GROUP BY F.ID " +
                     "ORDER BY likes_count DESC;";
             filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery, finalQuery);
         } else if (by.contains("title")) {
-            String sql = "SELECT L.ID_FILM as likes_count, " +
+            String sql = "SELECT (SELECT COUNT(ID_FILM) FROM LIKES WHERE ID_FILM = F.ID) as likes_count, " +
                     "F.ID, " +
                     "F.NAME, " +
                     "F.DESCRIPTION, " +
@@ -307,10 +309,11 @@ public class FilmDaoImpl implements FilmDao {
                     "LEFT JOIN RATING_MPA RM on F.MPA = RM.ID " +
                     "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
                     "WHERE F.NAME ILIKE ? " +
+                    "GROUP BY F.ID " +
                     "ORDER BY likes_count DESC;";
             filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery);
         } else if (by.contains("director")) {
-            String sql = "SELECT L.ID_FILM as likes_count, " +
+            String sql = "SELECT (SELECT COUNT(ID_FILM) FROM LIKES WHERE ID_FILM = F.ID) as likes_count, " +
                     "F.ID, " +
                     "F.NAME, " +
                     "F.DESCRIPTION, " +
@@ -324,6 +327,7 @@ public class FilmDaoImpl implements FilmDao {
                     "LEFT JOIN DIRECTOR_FILM DF on F.ID = DF.ID_FILM " +
                     "LEFT JOIN DIRECTOR D on DF.ID_DIRECTOR = D.ID " +
                     "WHERE D.NAME ILIKE ? " +
+                    "GROUP BY F.ID " +
                     "ORDER BY likes_count DESC;";
             filmList = jdbcTemplate.query(sql, (rs, rowNum) -> makeFilm(rs), finalQuery);
         }
