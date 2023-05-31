@@ -23,12 +23,19 @@ public class FilmService {
     private final GenreService genreService;
     private final DirectorService directorService;
 
+    private final FeedService feedService;
+
     @Autowired
-    public FilmService(FilmDao filmDao, UserDao userDao, GenreService genreService, DirectorService directorService) {
+    public FilmService(FilmDao filmDao,
+                       UserDao userDao,
+                       GenreService genreService,
+                       DirectorService directorService,
+                       FeedService feedService) {
         this.filmDao = filmDao;
         this.userDao = userDao;
         this.genreService = genreService;
         this.directorService = directorService;
+        this.feedService = feedService;
     }
 
     public Film add(Film film) {
@@ -90,6 +97,7 @@ public class FilmService {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
         filmDao.addLike(filmId, userId);
+        feedService.addLikeEvent(userId, filmId);
         log.info("Пользователь с id " + userId + " поставил лайк фильму с id " + filmId + "!");
     }
 
@@ -101,6 +109,7 @@ public class FilmService {
             throw new FilmNotFoundException("фильм с id " + filmId + " не найден");
         }
         filmDao.deleteLike(userId, filmId);
+        feedService.deleteLikeEvent(userId, filmId);
         log.info("Пользователь с id " + userId + " удалил лайк фильму с id " + filmId + "!");
     }
 

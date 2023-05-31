@@ -17,12 +17,14 @@ public class ReviewService {
     private final ReviewDaoImpl reviewDao;
     private final UserDaoImpl userDao;
     private final FilmDaoImpl filmDao;
+    private final FeedService feedService;
 
     @Autowired
-    public ReviewService(ReviewDaoImpl reviewDao, UserDaoImpl userDao, FilmDaoImpl filmDao) {
+    public ReviewService(ReviewDaoImpl reviewDao, UserDaoImpl userDao, FilmDaoImpl filmDao, FeedService feedService) {
         this.reviewDao = reviewDao;
         this.userDao = userDao;
         this.filmDao = filmDao;
+        this.feedService = feedService;
     }
 
     public Review add(Review review) {
@@ -39,7 +41,9 @@ public class ReviewService {
             throw new ValidationException("Поле 'isPositive' не должно быть пустым.");
         }
         log.info("Добавлен отзыв к фильму с id = {}", review.getFilmId());
-        return reviewDao.add(review);
+        Review result = reviewDao.add(review);
+        feedService.addReviewEvent(result);
+        return result;
     }
 
     public Review update(Review review) {
@@ -47,10 +51,13 @@ public class ReviewService {
             throw new ReviewNotFoundException("Отзыв с id = " + review.getReviewId() + " не найден.");
         }
         log.info("Обновлена информация о фильме в отзыве с id = {}", review.getReviewId());
-        return reviewDao.update(review);
+        Review result = reviewDao.update(review);
+        feedService.updateReviewEvent(result);
+        return result;
     }
 
     public void delete(long id) {
+        feedService.deleteReviewEvent(this.getById(id));
         reviewDao.delete(id);
     }
 
