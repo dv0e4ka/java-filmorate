@@ -7,6 +7,8 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 import ru.yandex.practicum.filmorate.dao.FeedDao;
+import ru.yandex.practicum.filmorate.exception.IncorrectParameterException;
+import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
 import ru.yandex.practicum.filmorate.model.Event;
 import ru.yandex.practicum.filmorate.model.EventType;
 import ru.yandex.practicum.filmorate.model.OperationType;
@@ -15,6 +17,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Objects;
 
 @Repository
 @Slf4j
@@ -42,8 +45,20 @@ public class FeedDaoImpl implements FeedDao {
             return ps;
         }, keyHolder);
 
-//        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
-//        return getEvent(id);
+//        int isUpdated = jdbcTemplate.update(eventSql,
+//                (int) event.getUserId(),
+//                event.getEventType().toString(),
+//                event.getOperationType().toString(),
+//                (int) event.getEntityId(),
+//                event.getTimestamp()
+//        );
+//        if (isUpdated == 0) {
+//            throw new IncorrectParameterException(
+//                    "Не получилось создать событие для пользователя с Id = " + event.getUserId());
+//        }
+
+        long id = Objects.requireNonNull(keyHolder.getKey()).longValue();
+        //return getEvent(id);
     }
 
     @Override
@@ -66,7 +81,7 @@ public class FeedDaoImpl implements FeedDao {
     public Event makeFeed(ResultSet resultSet) throws SQLException {
         Event event = new Event();
         event.setEventId(resultSet.getInt("id"));
-        event.setEntityId(resultSet.getInt("user_id"));
+        event.setUserId(resultSet.getInt("user_id"));
         event.setEventType(EventType.valueOf(resultSet.getString("event_type")));
         event.setOperationType(OperationType.valueOf(resultSet.getString("operation_type")));
         event.setEntityId(resultSet.getInt("entity_id"));
