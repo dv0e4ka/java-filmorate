@@ -50,7 +50,7 @@ public class UserService {
         User friend = userDao.getById(friendId);
 
         if (user == null) {
-            throw new UserNotFoundException("Пользователь с Id '" + userId + "' не найден");
+            throw new UserNotFoundException("Пользователь с id '" + userId + "' не найден");
         } else if (friend == null) {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
