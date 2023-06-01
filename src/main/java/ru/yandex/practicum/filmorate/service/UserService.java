@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.yandex.practicum.filmorate.exception.UserNotFoundException;
+import ru.yandex.practicum.filmorate.model.Film;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.dao.UserDao;
 
@@ -13,11 +14,15 @@ import java.util.stream.Collectors;
 @Service
 @Slf4j
 public class UserService {
-    private UserDao userDao;
+    private final UserDao userDao;
+    private final FeedService feedService;
+    private final FilmService filmService;
 
     @Autowired
-    public UserService(UserDao userDao) {
+    public UserService(UserDao userDao, FeedService feedService, FilmService filmService) {
         this.userDao = userDao;
+        this.feedService = feedService;
+        this.filmService = filmService;
     }
 
     public User add(User user) {
@@ -50,6 +55,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.addFriend(userId, friendId);
+            feedService.addFriendEvent(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " теперь друзья!");
         }
     }
@@ -64,6 +70,7 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id '" + friendId + "' не найден");
         } else {
             userDao.deleteFriend(userId, friendId);
+            feedService.deleteFriendEvent(userId, friendId);
             log.info("Пользователь с Id '" + userId + " и пользователь с Id '" + friendId + " больше не друзья!");
         }
     }
@@ -87,5 +94,14 @@ public class UserService {
             throw new UserNotFoundException("Пользователь с Id " + id
                     + " или пользователь с Id " + friendId + " не найден в сервисе");
         }
+    }
+
+    public List<Film> getRecommendations(long id) {
+        if (!userDao.isContains(id)) {
+            throw new UserNotFoundException("Пользователь с Id '" + id + "' не найден в сервисе");
+        }
+        List<Long> ids = userDao.getRecommendations(id);
+        List<Film> films = ids.stream().map(filmService::getById).collect(Collectors.toList());
+        return films;
     }
 }
