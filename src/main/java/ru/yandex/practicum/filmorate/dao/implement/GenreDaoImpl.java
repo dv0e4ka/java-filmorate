@@ -49,7 +49,7 @@ public class GenreDaoImpl implements GenreDao {
     }
 
     @Override
-    public List<Genre> updateGenre(long id, List<Genre> genres) {
+    public List<Genre>  updateGenre(long id, List<Genre> genres) {
         deleteGenre(id);
         addGenre(id, genres);
         return getALlGenreByFilm(id);

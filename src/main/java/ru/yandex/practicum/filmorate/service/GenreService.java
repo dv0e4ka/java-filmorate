@@ -20,7 +20,7 @@ public class GenreService {
         return genreDao.addGenre(id, genres);
     }
 
-    public List<Genre> updateGenre(long id, List<Genre> genres) {
+    public List<Genre>  updateGenre(long id, List<Genre> genres) {
         return genreDao.updateGenre(id, genres);
     }
 
