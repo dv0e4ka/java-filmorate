@@ -13,7 +13,7 @@ public class Event {
     private long eventId;               //Главный ключ
 
     @NotNull
-    long userId;
+    private long userId;
 
     @NotBlank
     private EventType eventType;
@@ -21,7 +21,7 @@ public class Event {
     private OperationType operation;
 
     @NotNull
-    long entityId;
+    private long entityId;
 
     @NotNull
     private Long timestamp;             //Храню числом из-за тестов
