@@ -20,7 +20,6 @@ public class UserService {
 
     @Autowired
     public UserService(UserDao userDao, FeedService feedService, FilmService filmService) {
-        //Хватит конфликтов
         this.userDao = userDao;
         this.feedService = feedService;
         this.filmService = filmService;
